@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+python-multipart
+Pillow
+g4f
+nest_asyncio
+piexif
+numpy

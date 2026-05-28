@@ -1,0 +1,25 @@
+# Entornos virtuales de Python (Backend)
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Dependencias de NodeJS (Frontend)
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Variables de entorno y configuraciones locales
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos del sistema y editores
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

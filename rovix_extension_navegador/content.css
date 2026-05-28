@@ -1,0 +1,295 @@
+/* =====================================================
+   ROVIX Guard - content.css
+   Estilos del panel flotante inyectado en páginas
+===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+#rovix-guard-panel {
+  position: absolute;
+  z-index: 2147483647;
+  width: 360px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  background: rgba(10, 12, 20, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+#rovix-guard-panel.rovix-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* Header */
+.rovix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.rovix-logo {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.rovix-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.rovix-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Loading */
+.rovix-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+.rovix-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: rovix-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes rovix-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Risk bar */
+.rovix-risk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rovix-risk-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rovix-risk-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rovix-risk-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 5px;
+}
+
+.rovix-risk-bar-wrap {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.rovix-risk-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.8s ease;
+  background: #22c55e;
+}
+
+/* Risk level colors */
+#rovix-guard-panel.rovix-panel-low .rovix-risk-bar { background: #eab308; }
+#rovix-guard-panel.rovix-panel-medium .rovix-risk-bar { background: #f97316; }
+#rovix-guard-panel.rovix-panel-high .rovix-risk-bar { background: #ef4444; }
+#rovix-guard-panel.rovix-panel-critical .rovix-risk-bar {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  animation: rovix-pulse-bar 1.5s ease-in-out infinite;
+}
+
+@keyframes rovix-pulse-bar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.rovix-risk-score {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+/* Badges */
+.rovix-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rovix-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Sections */
+.rovix-section {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rovix-section:last-child {
+  border-bottom: none;
+}
+
+.rovix-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+
+.rovix-explicacion {
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+  font-size: 12px;
+}
+
+.rovix-fragment {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 2px 2px 2px 0;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 2px solid #ef4444;
+  color: #fca5a5;
+  border-radius: 0 4px 4px 0;
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* Reformulado */
+.rovix-reformulado {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.rovix-btn-reformular {
+  width: 100%;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.rovix-btn-reformular:hover {
+  background: linear-gradient(135deg, #7c3aed, #6366f1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.rovix-btn-reformular:active {
+  transform: translateY(0);
+}
+
+/* Consejo */
+.rovix-consejo {
+  padding: 10px 14px;
+  color: rgba(163, 230, 53, 0.8);
+  font-size: 11px;
+  line-height: 1.4;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Error */
+.rovix-error {
+  padding: 12px 14px;
+  color: #fca5a5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Toast notification */
+#rovix-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483647;
+  padding: 10px 16px;
+  background: rgba(10, 12, 20, 0.95);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #86efac;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+#rovix-toast.rovix-toast-show {
+  opacity: 1;
+  transform: translateY(0);
+}
