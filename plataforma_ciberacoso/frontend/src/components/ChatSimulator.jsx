@@ -209,13 +209,7 @@ export default function ChatSimulator({ onBack }) {
             <div className="h-10 bg-gray-900" />
           </div>
 
-          <div className="mt-3 flex gap-2 flex-wrap justify-center">
-            {[{ color: 'bg-red-500', label: 'Crítico' }, { color: 'bg-orange-400', label: 'Alto' }, { color: 'bg-yellow-400', label: 'Medio' }].map(r => (
-              <span key={r.label} className="flex items-center gap-1 text-xs text-gray-600">
-                <span className={`w-2 h-2 rounded-full ${r.color}`} /> {r.label}
-              </span>
-            ))}
-          </div>
+
         </div>
 
         {/* ANALYSIS PANEL */}
@@ -250,14 +244,11 @@ export default function ChatSimulator({ onBack }) {
                 const style = getRiskStyle(analysisResult.risk_level)
                 return (
                   <div>
-                    <div className={`rounded-xl border-2 p-4 ${style.panel} transition-all`}>
+                    <div className="rounded-xl border-2 p-4 bg-gray-50 border-gray-200 transition-all">
                       <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold text-white ${style.badge}`}>
-                            {style.icon} {(analysisResult.risk_level || '').toUpperCase()}
-                          </span>
-                          <span className={`text-sm font-semibold ${style.title}`}>
-                            {analysisResult.intention}
+                          <span className="text-sm font-bold text-gray-800">
+                            Intención detectada: {analysisResult.intention}
                           </span>
                         </div>
                         <button onClick={() => { setSelectedMsg(null); setAnalysisResult(null) }}
@@ -266,14 +257,14 @@ export default function ChatSimulator({ onBack }) {
                         </button>
                       </div>
 
-                      <div className={`text-xs italic mb-3 px-3 py-2 rounded-lg bg-white/60 border ${style.panel.split(' ')[2]}`}>
+                      <div className="text-xs italic mb-3 px-3 py-2 rounded-lg bg-white border border-gray-200 text-gray-600">
                         "{selectedMsg.text}"
                       </div>
 
                       <p className="text-sm text-gray-700 leading-relaxed mb-3">{analysisResult.explanation}</p>
 
                       {analysisResult.recommendation && (
-                        <div className="bg-white/70 rounded-lg px-3 py-2 border border-white">
+                        <div className="bg-white rounded-lg px-3 py-2 border border-gray-200">
                           <p className="text-xs font-bold text-gray-500 mb-1">💡 ¿Qué hacer?</p>
                           <p className="text-sm text-gray-700">{analysisResult.recommendation}</p>
                         </div>

@@ -52,10 +52,14 @@ export default function ExtensionGuide({ onBack }) {
             </ul>
           </div>
 
-          <button className="bg-gray-800 text-white px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-gray-900 transition-colors">
+          <a
+            href="/rovix_extension.zip"
+            download="rovix_extension.zip"
+            className="bg-gray-800 text-white px-8 py-3 rounded-lg font-bold inline-flex items-center gap-2 hover:bg-gray-900 transition-colors"
+          >
             <Download size={20} />
-            Descargar Extensión (Próximamente)
-          </button>
+            Descargar Extensión
+          </a>
         </div>
       </div>
     </div>
