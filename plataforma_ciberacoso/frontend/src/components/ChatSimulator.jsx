@@ -142,21 +142,21 @@ export default function ChatSimulator({ onBack }) {
   ]
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-6 font-semibold transition-colors">
+    <div className="w-full h-full flex flex-col overflow-hidden max-w-7xl mx-auto">
+      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-6 font-semibold transition-colors flex-shrink-0">
         <ArrowLeft size={20} className="mr-2" /> Volver al inicio
       </button>
 
-      <div className="flex gap-6 items-start">
+      <div className="flex-1 flex gap-6 items-start min-h-0 overflow-hidden w-full">
 
         {/* PHONE SIMULATOR */}
-        <div className="flex flex-col items-center flex-shrink-0">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1">
+        <div className="flex flex-col items-center flex-shrink-0 h-full overflow-hidden">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1 flex-shrink-0">
             <span>📱</span> Toca un mensaje para analizarlo
           </p>
           <div
-            className="w-[320px] border-[12px] border-gray-900 rounded-[2.8rem] bg-gray-100 relative overflow-hidden shadow-2xl flex flex-col"
-            style={{ height: '600px', boxShadow: '0 25px 60px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.1)' }}
+            className="w-[320px] border-[12px] border-gray-900 rounded-[2.8rem] bg-gray-100 relative overflow-hidden shadow-2xl flex flex-col flex-1"
+            style={{ boxShadow: '0 25px 60px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.1)' }}
           >
             {/* Notch */}
             <div className="absolute top-0 inset-x-0 flex justify-center z-10">
@@ -213,9 +213,9 @@ export default function ChatSimulator({ onBack }) {
         </div>
 
         {/* ANALYSIS PANEL */}
-        <div className="flex-1 flex flex-col gap-4" style={{ minWidth: 0 }}>
-          <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg">
-            <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-5 py-4 flex items-center gap-3">
+        <div className="flex-1 flex flex-col gap-4 h-full min-h-0" style={{ minWidth: 0 }}>
+          <div className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col min-h-0">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-5 py-4 flex items-center gap-3 flex-shrink-0">
               <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">
                 <AlertTriangle size={18} className="text-white" />
               </div>
@@ -225,16 +225,16 @@ export default function ChatSimulator({ onBack }) {
               </div>
             </div>
 
-            <div className="p-5 min-h-[180px]">
+            <div className="p-5 flex-1 overflow-y-auto">
               {!selectedMsg && !analyzing && (
-                <div className="flex flex-col items-center justify-center h-32 text-gray-400">
-                  <AlertTriangle size={32} className="mb-2 opacity-30" />
+                <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                  <AlertTriangle size={32} className="mb-2 opacity-30 animate-pulse" />
                   <p className="text-sm text-center">Selecciona un mensaje del teléfono<br />para ver el análisis de intenciones</p>
                 </div>
               )}
 
               {analyzing && (
-                <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+                <div className="flex flex-col items-center justify-center h-full text-gray-500">
                   <Loader2 size={32} className="animate-spin mb-2 text-gray-400" />
                   <p className="text-sm">Analizando con IA...</p>
                 </div>
@@ -277,7 +277,7 @@ export default function ChatSimulator({ onBack }) {
           </div>
 
           {/* QUICK QUESTIONS */}
-          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-sm flex-shrink-0">
             <h3 className="font-bold text-gray-700 mb-3 text-xs uppercase tracking-wider flex items-center gap-2">
               <Sparkles size={14} /> Pregúntale a ROVIX
             </h3>
@@ -287,7 +287,7 @@ export default function ChatSimulator({ onBack }) {
                   key={i}
                   onClick={() => sendChat(q.text)}
                   disabled={chatLoading}
-                  className="text-left p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition-all disabled:opacity-50 flex items-center gap-2 group"
+                  className="text-left p-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-100 hover:border-gray-400 transition-all disabled:opacity-50 flex items-center gap-2 group cursor-pointer"
                 >
                   <span className="text-base group-hover:scale-110 transition-transform">{q.emoji}</span>
                   <span>{q.text}</span>
@@ -298,10 +298,7 @@ export default function ChatSimulator({ onBack }) {
         </div>
 
         {/* CHATBOT PANEL */}
-        <div
-          className="w-[340px] flex-shrink-0 bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg flex flex-col"
-          style={{ height: '640px' }}
-        >
+        <div className="w-[340px] flex-shrink-0 bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg flex flex-col h-full">
           <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-5 py-4 flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">
               <MessageSquareText size={18} className="text-white" />
