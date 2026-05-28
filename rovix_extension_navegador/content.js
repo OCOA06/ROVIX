@@ -7,17 +7,24 @@
   if (window.__rovixGuardInjected) return;
   window.__rovixGuardInjected = true;
 
-  // Estado global del content script
   const state = {
     activeField: null,
-    debounceTimer: null,
+    typingTimer: null,      // Timer que detecta cuando SE DEJA de escribir
+    analyzeTimer: null,     // Timer para el análisis tras parar de escribir
     currentPanel: null,
     lastAnalyzedText: "",
     isAnalyzing: false,
+    isTyping: false,
     lastResult: null,
+    reformuladoText: "",
   };
 
-  // Selectores de campos de texto a monitorear
+  // Debounce: tiempo de espera tras dejar de escribir antes de analizar (ms)
+  const DEBOUNCE_TYPING_MS = 1200;
+  // Mínimo de caracteres para disparar análisis
+  const MIN_CHARS = 10;
+
+  // Selectores ampliados para Gmail, Outlook, WhatsApp Web, Discord, Twitter/X, etc.
   const TEXT_SELECTORS = [
     "textarea",
     'input[type="text"]',
@@ -25,77 +32,91 @@
     'input[type="email"]',
     "[contenteditable='true']",
     "[contenteditable='']",
+    "[contenteditable]",
     "[role='textbox']",
+    "[role='combobox']",
+    // Gmail compose
+    "[g_editable='true']",
+    ".Am.Al.editable",
+    // WhatsApp Web
+    "[data-tab='10']",
+    "[data-testid='conversation-compose-box-input']",
+    // Twitter/X
     "[data-testid='tweetTextarea_0']",
+    "[data-testid='tweetTextarea_0root']",
+    // Generic editors
     ".ql-editor",
     ".DraftEditor-content",
     ".public-DraftEditor-content",
+    ".ProseMirror",
+    "[aria-multiline='true']",
+    // Outlook Web
+    "[aria-label*='mensaje']",
+    "[aria-label*='message']",
+    "[aria-label*='Message']",
+    "[aria-label*='Compose']",
+    "[aria-label*='Redactar']",
   ];
 
-  // Inicialización
   init();
 
   function init() {
-    attachListeners(document.body);
-
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            attachListeners(node);
-          }
-        }
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Usar delegación de eventos a nivel de document para mejorar rendimiento
+    // y eliminar la necesidad de un costoso MutationObserver
+    document.addEventListener("focusin", handleDelegatedEvent, true);
+    document.addEventListener("input", handleDelegatedEvent, true);
+    document.addEventListener("keydown", handleDelegatedEvent, true);
   }
 
-  function attachListeners(root) {
-    const fields = getTextFields(root);
-    fields.forEach((field) => {
-      if (field.__rovixAttached) return;
-      field.__rovixAttached = true;
+  function handleDelegatedEvent(e) {
+    const target = e.target;
+    if (!target || target.nodeType !== Node.ELEMENT_NODE) return;
 
-      field.addEventListener("input", () => onTextInput(field));
-      field.addEventListener("focus", () => onFocus(field));
-      field.addEventListener("blur", () => onBlur());
-    });
+    if (isTextField(target)) {
+      if (e.type === "focusin") onFocus(target);
+      else if (e.type === "keydown") onKeyDown(target);
+      else if (e.type === "input") onTextInput(target);
+    }
   }
 
-  function getTextFields(root) {
-    const results = [];
+  function isTextField(el) {
+    if (el.tagName === "TEXTAREA") return true;
+    if (el.tagName === "INPUT") {
+      const type = el.type;
+      if (type === "text" || type === "search" || type === "email") return true;
+    }
+    if (el.isContentEditable || el.getAttribute("contenteditable") !== null) return true;
+    
     try {
-      if (root.matches && TEXT_SELECTORS.some((s) => root.matches(s))) {
-        results.push(root);
+      for (const s of TEXT_SELECTORS) {
+        if (el.matches(s)) return true;
       }
-      TEXT_SELECTORS.forEach((selector) => {
-        root.querySelectorAll && root.querySelectorAll(selector).forEach((el) => {
-          if (!results.includes(el)) results.push(el);
-        });
-      });
     } catch {}
-    return results;
+    return false;
   }
 
   function getFieldText(field) {
     if (field.isContentEditable || field.getAttribute("contenteditable") !== null) {
-      return field.innerText || field.textContent || "";
+      return (field.innerText || field.textContent || "").trim();
     }
-    return field.value || "";
+    return (field.value || "").trim();
   }
 
   function setFieldText(field, text) {
     if (field.isContentEditable || field.getAttribute("contenteditable") !== null) {
-      field.innerText = text;
+      field.focus();
+      document.execCommand("selectAll", false, null);
+      document.execCommand("insertText", false, text);
+      if (!field.innerText || field.innerText.length === 0) {
+        field.innerText = text;
+      }
       field.dispatchEvent(new Event("input", { bubbles: true }));
     } else {
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        "value"
-      ) || Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value");
-
-      if (nativeInputValueSetter && nativeInputValueSetter.set) {
-        nativeInputValueSetter.set.call(field, text);
+      const nativeSetter =
+        Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value") ||
+        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+      if (nativeSetter && nativeSetter.set) {
+        nativeSetter.set.call(field, text);
       } else {
         field.value = text;
       }
@@ -108,42 +129,63 @@
     state.activeField = field;
   }
 
-  function onBlur() {
-    setTimeout(() => {
-      if (!document.activeElement || !isTextField(document.activeElement)) {
-        // No ocultar si el usuario clickeó el panel
-        if (state.currentPanel && !state.currentPanel.contains(document.activeElement)) {
-          // Mantener panel visible un momento antes de ocultarlo
-        }
-      }
-    }, 300);
-  }
-
-  function isTextField(el) {
-    return TEXT_SELECTORS.some((s) => {
-      try { return el.matches(s); } catch { return false; }
-    });
+  function onKeyDown(field) {
+    // Detectar inicio de escritura para mostrar indicador inmediatamente
+    state.activeField = field;
   }
 
   function onTextInput(field) {
-    state.activeField = field;
-    clearTimeout(state.debounceTimer);
+    // Verificar que el runtime siga válido antes de hacer cualquier cosa
+    if (!isRuntimeValid()) return;
 
-    const text = getFieldText(field).trim();
-    if (text.length < 5) {
+    state.activeField = field;
+
+    const text = getFieldText(field);
+
+    // Limpiar timers previos
+    clearTimeout(state.typingTimer);
+    clearTimeout(state.analyzeTimer);
+
+    if (text.length < MIN_CHARS) {
       hidePanel();
+      state.isTyping = false;
       return;
     }
 
-    state.debounceTimer = setTimeout(() => {
-      if (text !== state.lastAnalyzedText) {
+    // Mostrar indicador de escritura activa inmediatamente
+    if (!state.isTyping) {
+      state.isTyping = true;
+      showTypingIndicator(field);
+    } else {
+      positionPanel(field);
+    }
+
+    // Cuando el usuario DEJA de escribir → analizar
+    state.typingTimer = setTimeout(() => {
+      state.isTyping = false;
+      if (text !== state.lastAnalyzedText && text.length >= MIN_CHARS) {
         analyzeField(field, text);
       }
-    }, 1500);
+    }, DEBOUNCE_TYPING_MS);
+  }
+
+  function isRuntimeValid() {
+    try {
+      return !!(chrome && chrome.runtime && chrome.runtime.id);
+    } catch {
+      return false;
+    }
   }
 
   async function analyzeField(field, text) {
     if (state.isAnalyzing) return;
+
+    // Si el contexto de la extensión ya no es válido (fue recargada), limpiar y salir
+    if (!isRuntimeValid()) {
+      hidePanel();
+      return;
+    }
+
     state.isAnalyzing = true;
     state.lastAnalyzedText = text;
 
@@ -155,13 +197,25 @@
         text: text,
       });
 
-      if (response.success) {
+      if (response && response.success) {
         state.lastResult = response.data;
         renderResultPanel(field, response.data, text);
       } else {
-        handleError(field, response.error);
+        handleError(field, response ? response.error : "Sin respuesta");
       }
     } catch (err) {
+      // Contexto invalidado: la extensión fue recargada, silenciosamente ocultar panel
+      if (
+        err.message &&
+        (err.message.includes("Extension context invalidated") ||
+         err.message.includes("context invalidated") ||
+         err.message.includes("Cannot read properties of undefined"))
+      ) {
+        hidePanel();
+        return;
+      }
+      // Resetear el texto analizado para que el próximo intento no sea bloqueado
+      state.lastAnalyzedText = "";
       handleError(field, err.message);
     } finally {
       state.isAnalyzing = false;
@@ -174,7 +228,7 @@
       return;
     }
     if (errorMsg === "NO_API_KEY") {
-      showErrorPanel(field, "⚠️ Configura tu API Key de Gemini en el ícono de ROVIX Guard.");
+      showErrorPanel(field, "Configura tu API Key de Gemini en el ícono de ROVIX Guard.");
       return;
     }
     showErrorPanel(field, `Error al analizar: ${errorMsg}`);
@@ -187,7 +241,6 @@
     if (!panel) {
       panel = document.createElement("div");
       panel.id = "rovix-guard-panel";
-      panel.className = "rovix-panel";
       document.body.appendChild(panel);
     }
     return panel;
@@ -195,24 +248,78 @@
 
   function positionPanel(field) {
     const panel = document.getElementById("rovix-guard-panel");
-    if (!panel) return;
+    if (!panel || !field) return;
 
     const rect = field.getBoundingClientRect();
     const scrollY = window.scrollY || document.documentElement.scrollTop;
     const scrollX = window.scrollX || document.documentElement.scrollLeft;
 
-    let top = rect.bottom + scrollY + 8;
-    let left = rect.left + scrollX;
-
     const panelWidth = 360;
-    if (left + panelWidth > window.innerWidth - 20) {
-      left = window.innerWidth - panelWidth - 20;
+    // Estimate panel height based on its classes, or use a default max
+    // Since it's absolutely positioned and might not be fully rendered yet, we use a safe estimate
+    const estimatedPanelHeight = panel.classList.contains('rg-state-result') ? 380 : 100;
+    
+    let left = rect.left + scrollX;
+    
+    // Evitar salirse por la derecha
+    if (left + panelWidth > window.innerWidth - 16) {
+      left = window.innerWidth - panelWidth - 16;
     }
     if (left < 10) left = 10;
 
-    panel.style.top = `${top}px`;
+    // Decidir si va arriba o abajo basado en el espacio disponible en el viewport
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    let top;
+    if (spaceBelow < estimatedPanelHeight && spaceAbove > spaceBelow) {
+      // Mostrar arriba si hay poco espacio abajo y más espacio arriba
+      // Calculamos el top real cuando el panel ya tiene altura,
+      // pero por ahora aplicamos una clase que lo ancla al bottom relativo al top calculado
+      panel.classList.add('rg-position-top');
+      // Necesitamos renderizar el panel primero para saber su altura real y ajustarlo,
+      // por lo que usamos el bottom de la caja para anclar si usamos la clase
+      top = rect.top + scrollY - 10; // Usaremos esto como punto de anclaje base en CSS
+    } else {
+      // Mostrar abajo
+      panel.classList.remove('rg-position-top');
+      top = rect.bottom + scrollY + 10;
+    }
+
     panel.style.left = `${left}px`;
-    panel.style.width = `${Math.min(panelWidth, rect.width || panelWidth)}px`;
+    
+    if (panel.classList.contains('rg-position-top')) {
+      panel.style.top = 'auto';
+      panel.style.bottom = `${window.innerHeight - top + scrollY}px`; // Distancia desde el fondo del documento
+    } else {
+      panel.style.top = `${top}px`;
+      panel.style.bottom = 'auto';
+    }
+  }
+
+  // Panel: usuario está escribiendo (pulsando teclas)
+  function showTypingIndicator(field) {
+    const panel = getOrCreatePanel();
+    state.currentPanel = panel;
+
+    panel.innerHTML = `
+      <div class="rg-header">
+        <div class="rg-logo">
+          <span class="rg-title">ROVIX Guard</span>
+        </div>
+        <button class="rg-close" id="rg-close-btn">✕</button>
+      </div>
+      <div class="rg-typing">
+        <div class="rg-typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="rg-typing-label">Monitoreando tu mensaje…</span>
+      </div>
+    `;
+
+    panel.className = "rg-panel rg-visible rg-state-typing";
+    positionPanel(field);
+    document.getElementById("rg-close-btn")?.addEventListener("click", hidePanel);
   }
 
   function showLoadingPanel(field) {
@@ -220,91 +327,107 @@
     state.currentPanel = panel;
 
     panel.innerHTML = `
-      <div class="rovix-header">
-        <span class="rovix-logo">🛡️ ROVIX Guard</span>
-        <button class="rovix-close" id="rovix-close-btn">✕</button>
+      <div class="rg-header">
+        <div class="rg-logo">
+          <span class="rg-title">ROVIX Guard</span>
+        </div>
+        <button class="rg-close" id="rg-close-btn">✕</button>
       </div>
-      <div class="rovix-loading">
-        <div class="rovix-spinner"></div>
-        <span>Analizando mensaje...</span>
+      <div class="rg-loading">
+        <div class="rg-spinner"></div>
+        <span>Analizando mensaje con IA…</span>
       </div>
     `;
-    panel.className = "rovix-panel rovix-visible";
-    positionPanel(field);
 
-    document.getElementById("rovix-close-btn")?.addEventListener("click", hidePanel);
+    panel.className = "rg-panel rg-visible rg-state-loading";
+    positionPanel(field);
+    document.getElementById("rg-close-btn")?.addEventListener("click", hidePanel);
   }
 
   function renderResultPanel(field, data, originalText) {
     const panel = getOrCreatePanel();
     state.currentPanel = panel;
 
-    const riskClass = getRiskClass(data.nivel_riesgo);
-    const riskIcon = getRiskIcon(data.nivel_riesgo);
-    const riskLabel = getRiskLabel(data.nivel_riesgo);
+    const isNocivo = data.es_nocivo;
+    const riskClass = isNocivo ? "critical" : "none";
+    const riskLabel = isNocivo ? "Contenido de riesgo detectado" : "Mensaje seguro y respetuoso";
 
     const categoriasBadges = (data.categorias_detectadas || [])
-      .map(c => `<span class="rovix-badge">${c.replace(/_/g, " ")}</span>`)
+      .map((c) => `<span class="rg-badge">${c.replace(/_/g, " ")}</span>`)
       .join("");
 
-    const fragmentosHTML = (data.fragmentos_problematicos || []).length > 0
-      ? `<div class="rovix-section">
-          <div class="rovix-section-title">🔍 Frases problemáticas</div>
-          ${data.fragmentos_problematicos.map(f => `<div class="rovix-fragment">"${f}"</div>`).join("")}
+    const fragmentosHTML =
+      (data.fragmentos_problematicos || []).length > 0
+        ? `<div class="rg-section">
+            <div class="rg-section-title">Frases detectadas</div>
+            <div class="rg-fragments">
+              ${data.fragmentos_problematicos
+                .map((f) => `<div class="rg-fragment">"${escapeHtml(f)}"</div>`)
+                .join("")}
+            </div>
+          </div>`
+        : "";
+
+    const explicacionHTML =
+      data.explicacion && isNocivo
+        ? `<div class="rg-section">
+            <div class="rg-section-title">Análisis</div>
+            <div class="rg-explicacion">${escapeHtml(data.explicacion)}</div>
+          </div>`
+        : "";
+
+    const showReformular =
+      isNocivo &&
+      data.mensaje_reformulado &&
+      data.mensaje_reformulado !== originalText;
+
+    state.reformuladoText = showReformular ? data.mensaje_reformulado : "";
+
+    const reformularHTML = showReformular
+      ? `<div class="rg-section rg-section-reformular">
+          <div class="rg-section-title">Versión alternativa sugerida</div>
+          <div class="rg-reformulado">${escapeHtml(data.mensaje_reformulado)}</div>
+          <button class="rg-btn-apply" id="rg-apply-btn">Reemplazar mensaje con esta versión</button>
         </div>`
       : "";
 
     const consejoHTML = data.consejo
-      ? `<div class="rovix-consejo">💡 ${data.consejo}</div>`
-      : "";
-
-    const reformularHTML = data.nivel_riesgo !== "NINGUNO" && data.mensaje_reformulado && data.mensaje_reformulado !== originalText
-      ? `<div class="rovix-section">
-          <div class="rovix-section-title">✨ Alternativa sugerida</div>
-          <div class="rovix-reformulado">${escapeHtml(data.mensaje_reformulado)}</div>
-          <button class="rovix-btn-reformular" id="rovix-apply-btn">Aplicar esta versión</button>
-        </div>`
+      ? `<div class="rg-consejo">${escapeHtml(data.consejo)}</div>`
       : "";
 
     panel.innerHTML = `
-      <div class="rovix-header">
-        <span class="rovix-logo">🛡️ ROVIX Guard</span>
-        <button class="rovix-close" id="rovix-close-btn">✕</button>
-      </div>
-
-      <div class="rovix-risk ${riskClass}">
-        <span class="rovix-risk-icon">${riskIcon}</span>
-        <div class="rovix-risk-info">
-          <div class="rovix-risk-label">${riskLabel}</div>
-          <div class="rovix-risk-bar-wrap">
-            <div class="rovix-risk-bar" style="width: ${data.puntuacion}%"></div>
-          </div>
+      <div class="rg-header">
+        <div class="rg-logo">
+          <span class="rg-title">ROVIX Guard</span>
         </div>
-        <span class="rovix-risk-score">${data.puntuacion}/100</span>
+        <button class="rg-close" id="rg-close-btn">✕</button>
       </div>
 
-      ${categoriasBadges ? `<div class="rovix-badges">${categoriasBadges}</div>` : ""}
+      <div class="rg-risk rg-risk-${riskClass}">
+        <div class="rg-risk-top">
+          <span class="rg-risk-label">${riskLabel}</span>
+        </div>
+        ${isNocivo ? `<div class="rg-risk-bar-wrap">
+          <div class="rg-risk-bar" style="width:100%"></div>
+        </div>` : ''}
+      </div>
 
-      ${data.explicacion && data.nivel_riesgo !== "NINGUNO" ? `
-        <div class="rovix-section">
-          <div class="rovix-section-title">📋 Análisis</div>
-          <div class="rovix-explicacion">${escapeHtml(data.explicacion)}</div>
-        </div>` : ""}
-
+      ${categoriasBadges ? `<div class="rg-badges">${categoriasBadges}</div>` : ""}
+      ${explicacionHTML}
       ${fragmentosHTML}
       ${reformularHTML}
       ${consejoHTML}
     `;
 
-    panel.className = `rovix-panel rovix-visible rovix-panel-${riskClass}`;
+    panel.className = `rg-panel rg-visible rg-state-result rg-level-${riskClass}`;
     positionPanel(field);
 
-    document.getElementById("rovix-close-btn")?.addEventListener("click", hidePanel);
-    document.getElementById("rovix-apply-btn")?.addEventListener("click", () => {
-      if (field && data.mensaje_reformulado) {
-        setFieldText(field, data.mensaje_reformulado);
+    document.getElementById("rg-close-btn")?.addEventListener("click", hidePanel);
+    document.getElementById("rg-apply-btn")?.addEventListener("click", () => {
+      if (field && state.reformuladoText) {
+        setFieldText(field, state.reformuladoText);
         hidePanel();
-        showToast("✅ Mensaje actualizado con la versión mejorada");
+        showToast("Mensaje reemplazado con la versión alternativa");
       }
     });
   }
@@ -314,56 +437,49 @@
     state.currentPanel = panel;
 
     panel.innerHTML = `
-      <div class="rovix-header">
-        <span class="rovix-logo">🛡️ ROVIX Guard</span>
-        <button class="rovix-close" id="rovix-close-btn">✕</button>
+      <div class="rg-header">
+        <div class="rg-logo">
+          <span class="rg-title">ROVIX Guard</span>
+        </div>
+        <button class="rg-close" id="rg-close-btn">✕</button>
       </div>
-      <div class="rovix-error">${message}</div>
+      <div class="rg-error">${escapeHtml(message)}</div>
     `;
-    panel.className = "rovix-panel rovix-visible";
+
+    panel.className = "rg-panel rg-visible rg-state-error";
     positionPanel(field);
-    document.getElementById("rovix-close-btn")?.addEventListener("click", hidePanel);
+    document.getElementById("rg-close-btn")?.addEventListener("click", hidePanel);
   }
 
   function hidePanel() {
     const panel = document.getElementById("rovix-guard-panel");
     if (panel) {
-      panel.className = "rovix-panel";
+      panel.className = "rg-panel";
       setTimeout(() => {
-        if (!panel.classList.contains("rovix-visible")) {
+        if (!panel.classList.contains("rg-visible")) {
           panel.innerHTML = "";
         }
-      }, 400);
+      }, 350);
     }
     state.currentPanel = null;
+    state.isTyping = false;
+    clearTimeout(state.typingTimer);
+    clearTimeout(state.analyzeTimer);
   }
 
   function showToast(message) {
-    let toast = document.getElementById("rovix-toast");
+    let toast = document.getElementById("rg-toast");
     if (!toast) {
       toast = document.createElement("div");
-      toast.id = "rovix-toast";
-      toast.className = "rovix-toast";
+      toast.id = "rg-toast";
       document.body.appendChild(toast);
     }
     toast.textContent = message;
-    toast.classList.add("rovix-toast-show");
-    setTimeout(() => toast.classList.remove("rovix-toast-show"), 3000);
+    toast.classList.add("rg-toast-show");
+    setTimeout(() => toast.classList.remove("rg-toast-show"), 3000);
   }
 
   // =================== HELPERS ====================
-
-  function getRiskClass(nivel) {
-    return { NINGUNO: "none", BAJO: "low", MEDIO: "medium", ALTO: "high", CRITICO: "critical" }[nivel] || "none";
-  }
-
-  function getRiskIcon(nivel) {
-    return { NINGUNO: "✅", BAJO: "🟡", MEDIO: "🟠", ALTO: "🔴", CRITICO: "🚨" }[nivel] || "✅";
-  }
-
-  function getRiskLabel(nivel) {
-    return { NINGUNO: "Sin riesgo detectado", BAJO: "Riesgo bajo", MEDIO: "Riesgo moderado", ALTO: "Alto riesgo", CRITICO: "⚠️ Contenido crítico" }[nivel] || "Sin riesgo";
-  }
 
   function escapeHtml(text) {
     const div = document.createElement("div");
@@ -371,16 +487,11 @@
     return div.innerHTML;
   }
 
-  // Reposicionar panel al hacer scroll
   window.addEventListener("scroll", () => {
-    if (state.activeField && state.currentPanel) {
-      positionPanel(state.activeField);
-    }
+    if (state.activeField && state.currentPanel) positionPanel(state.activeField);
   }, { passive: true });
 
   window.addEventListener("resize", () => {
-    if (state.activeField && state.currentPanel) {
-      positionPanel(state.activeField);
-    }
+    if (state.activeField && state.currentPanel) positionPanel(state.activeField);
   });
 })();

@@ -1,5 +1,6 @@
 /* =====================================================
    ROVIX Guard - popup.css
+   Paleta: GRISES únicamente (color final pendiente)
 ===================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -13,8 +14,8 @@
 body {
   width: 340px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #080a12;
-  color: #e2e8f0;
+  background: #111111;
+  color: #d4d4d4;
   font-size: 13px;
   overflow-x: hidden;
 }
@@ -29,13 +30,12 @@ body {
   align-items: center;
   gap: 10px;
   padding: 16px 16px 12px;
-  background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 .header-icon {
   font-size: 26px;
-  filter: drop-shadow(0 0 8px rgba(99,102,241,0.5));
 }
 
 .header-text {
@@ -45,13 +45,13 @@ body {
 .header-title {
   font-size: 15px;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #eeeeee;
   letter-spacing: 0.3px;
 }
 
 .header-subtitle {
   font-size: 10px;
-  color: rgba(255,255,255,0.35);
+  color: #666;
   margin-top: 1px;
   font-weight: 400;
 }
@@ -74,10 +74,10 @@ body {
 .slider {
   position: absolute;
   inset: 0;
-  background: rgba(255,255,255,0.1);
+  background: #2e2e2e;
   border-radius: 99px;
   transition: 0.3s;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid #3a3a3a;
 }
 
 .slider::before {
@@ -87,20 +87,19 @@ body {
   height: 16px;
   left: 2px;
   top: 2px;
-  background: rgba(255,255,255,0.5);
+  background: #666;
   border-radius: 50%;
   transition: 0.3s;
 }
 
 .toggle input:checked + .slider {
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  border-color: rgba(99,102,241,0.5);
-  box-shadow: 0 0 10px rgba(99,102,241,0.4);
+  background: #555;
+  border-color: #777;
 }
 
 .toggle input:checked + .slider::before {
   transform: translateX(18px);
-  background: white;
+  background: #ddd;
 }
 
 /* Status bar */
@@ -109,44 +108,43 @@ body {
   align-items: center;
   gap: 7px;
   padding: 7px 16px;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: #161616;
+  border-bottom: 1px solid #222;
   font-size: 11px;
-  color: rgba(255,255,255,0.4);
+  color: #666;
 }
 
 .status-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.2);
+  background: #333;
   flex-shrink: 0;
   transition: 0.3s;
 }
 
 .status-dot.active {
-  background: #22c55e;
-  box-shadow: 0 0 6px rgba(34,197,94,0.5);
+  background: #aaa;
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
 .status-dot.inactive {
-  background: #ef4444;
+  background: #444;
 }
 
 .status-dot.warning {
-  background: #f59e0b;
+  background: #888;
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
-  50% { opacity: 0.7; box-shadow: 0 0 10px rgba(34,197,94,0.8); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(180,180,180,0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 9px rgba(180,180,180,0.7); }
 }
 
 /* Sections */
 .section {
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid #222;
 }
 
 .section:last-of-type {
@@ -167,7 +165,7 @@ body {
 .section-title {
   font-size: 11px;
   font-weight: 700;
-  color: rgba(255,255,255,0.5);
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   flex: 1;
@@ -175,14 +173,14 @@ body {
 
 .link-btn {
   font-size: 10px;
-  color: #818cf8;
+  color: #999;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s;
 }
 
 .link-btn:hover {
-  color: #a5b4fc;
+  color: #ccc;
 }
 
 /* API Key input */
@@ -194,10 +192,10 @@ body {
 .api-input {
   width: 100%;
   padding: 9px 36px 9px 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: #1e1e1e;
+  border: 1px solid #333;
   border-radius: 10px;
-  color: #e2e8f0;
+  color: #ddd;
   font-size: 12px;
   font-family: 'Inter', monospace;
   outline: none;
@@ -205,12 +203,12 @@ body {
 }
 
 .api-input:focus {
-  border-color: rgba(99,102,241,0.5);
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  border-color: #666;
+  box-shadow: 0 0 0 3px rgba(150,150,150,0.1);
 }
 
 .api-input::placeholder {
-  color: rgba(255,255,255,0.2);
+  color: #444;
 }
 
 .toggle-visibility {
@@ -234,76 +232,58 @@ body {
 .save-btn {
   width: 100%;
   padding: 9px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
-  color: white;
-  border: none;
+  background: #383838;
+  color: #e0e0e0;
+  border: 1px solid #555;
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(99,102,241,0.25);
   margin-bottom: 8px;
 }
 
 .save-btn:hover {
-  background: linear-gradient(135deg, #7c3aed, #6366f1);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(99,102,241,0.35);
+  background: #484848;
+  border-color: #888;
+  color: #fff;
 }
 
 .save-btn:active {
-  transform: translateY(0);
+  transform: scale(0.98);
+}
+
+.save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .hint {
   font-size: 10px;
-  color: rgba(255,255,255,0.25);
+  color: #555;
   line-height: 1.5;
+  margin-bottom: 10px;
 }
 
 .hint strong {
-  color: rgba(255,255,255,0.4);
+  color: #888;
 }
 
-/* Risk legend */
-.risk-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.feature-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
 }
 
-.risk-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 0;
-}
-
-.risk-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.risk-none .risk-dot { background: #22c55e; }
-.risk-low .risk-dot { background: #eab308; }
-.risk-medium .risk-dot { background: #f97316; }
-.risk-high .risk-dot { background: #ef4444; }
-.risk-critical .risk-dot { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
-
-.risk-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.75);
-}
-
-.risk-desc {
+.feature-item {
   font-size: 10px;
-  color: rgba(255,255,255,0.3);
+  color: #666;
+  padding: 3px 0;
+  line-height: 1.4;
 }
+
+
 
 /* Footer */
 .footer {
@@ -311,8 +291,8 @@ body {
   justify-content: space-between;
   padding: 8px 16px 4px;
   font-size: 10px;
-  color: rgba(255,255,255,0.2);
-  border-top: 1px solid rgba(255,255,255,0.04);
+  color: #444;
+  border-top: 1px solid #222;
 }
 
 /* Toast */
@@ -322,9 +302,9 @@ body {
   left: 50%;
   transform: translateX(-50%) translateY(10px);
   padding: 7px 14px;
-  background: rgba(10,12,20,0.98);
-  border: 1px solid rgba(99,102,241,0.3);
-  color: #a5b4fc;
+  background: #1e1e1e;
+  border: 1px solid #444;
+  color: #ccc;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 500;

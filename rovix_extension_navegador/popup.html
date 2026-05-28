@@ -12,10 +12,10 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <div class="header-icon">🛡️</div>
+      <div class="header-icon">🛡</div>
       <div class="header-text">
         <h1 class="header-title">ROVIX Guard</h1>
-        <p class="header-subtitle">Detector de Ciberacoso con IA</p>
+        <p class="header-subtitle">Detector de Ciberacoso</p>
       </div>
       <div class="toggle-wrap">
         <label class="toggle" id="toggle-label">
@@ -31,79 +31,28 @@
       <span id="status-text">Cargando...</span>
     </div>
 
-    <!-- API Key section -->
+    <!-- Info section -->
     <section class="section">
       <div class="section-header">
-        <span class="section-icon">🔑</span>
-        <span class="section-title">API Key de Gemini</span>
-        <a href="https://aistudio.google.com/apikey" target="_blank" class="link-btn" id="get-key-link">Obtener gratis →</a>
+        <span class="section-title">Categorías de Análisis</span>
       </div>
-      <div class="input-wrap">
-        <input
-          type="password"
-          id="api-key-input"
-          class="api-input"
-          placeholder="AIza..."
-          autocomplete="off"
-          spellcheck="false"
-        />
-        <button class="toggle-visibility" id="toggle-visibility" title="Mostrar/ocultar">👁</button>
-      </div>
-      <button class="save-btn" id="save-btn">Guardar API Key</button>
       <p class="hint">
-        Gratis en <strong>Google AI Studio</strong>. Gemini 1.5 Flash tiene 15 solicitudes/minuto sin costo.
+        Analizamos tu texto para prevenir el envío de mensajes dañinos. 
       </p>
-    </section>
-
-    <!-- Risk levels legend -->
-    <section class="section">
-      <div class="section-header">
-        <span class="section-icon">📊</span>
-        <span class="section-title">Niveles de Riesgo</span>
-      </div>
-      <div class="risk-legend">
-        <div class="risk-item risk-none">
-          <span class="risk-dot"></span>
-          <div>
-            <div class="risk-name">Sin riesgo</div>
-            <div class="risk-desc">Mensaje seguro y respetuoso</div>
-          </div>
-        </div>
-        <div class="risk-item risk-low">
-          <span class="risk-dot"></span>
-          <div>
-            <div class="risk-name">Riesgo bajo</div>
-            <div class="risk-desc">Leve, podría malinterpretarse</div>
-          </div>
-        </div>
-        <div class="risk-item risk-medium">
-          <span class="risk-dot"></span>
-          <div>
-            <div class="risk-name">Riesgo moderado</div>
-            <div class="risk-desc">Contenido potencialmente dañino</div>
-          </div>
-        </div>
-        <div class="risk-item risk-high">
-          <span class="risk-dot"></span>
-          <div>
-            <div class="risk-name">Alto riesgo</div>
-            <div class="risk-desc">Acoso o amenaza identificada</div>
-          </div>
-        </div>
-        <div class="risk-item risk-critical">
-          <span class="risk-dot"></span>
-          <div>
-            <div class="risk-name">Crítico</div>
-            <div class="risk-desc">Contenido gravemente dañino</div>
-          </div>
-        </div>
+      <div class="feature-list">
+        <div class="feature-item">- Amenazas y violencia</div>
+        <div class="feature-item">- Insultos y lenguaje ofensivo</div>
+        <div class="feature-item">- Humillación pública</div>
+        <div class="feature-item">- Discriminación</div>
+        <div class="feature-item">- Manipulación emocional</div>
+        <div class="feature-item">- Acoso y persecución</div>
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-      <span>ROVIX Guard v1.0</span>
-      <span>Powered by Google Gemini</span>
+      <span>ROVIX Guard v2.0</span>
+      <span>Protección activa</span>
     </footer>
   </div>
 

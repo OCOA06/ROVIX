@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ROVIX Guard — Detector de Ciberacoso",
-  "version": "1.0.0",
-  "description": "Detecta indicios de ciberacoso en tus mensajes usando IA y te ofrece alternativas más respetuosas.",
+  "version": "2.0.0",
+  "description": "Detecta ciberacoso en tiempo real usando análisis local con IA. Sin API key, sin límites, sin internet.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -31,8 +31,5 @@
   "permissions": [
     "storage",
     "activeTab"
-  ],
-  "host_permissions": [
-    "https://generativelanguage.googleapis.com/*"
   ]
 }
