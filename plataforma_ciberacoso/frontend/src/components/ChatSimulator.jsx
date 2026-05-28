@@ -183,9 +183,7 @@ export default function ChatSimulator({ onBack }) {
                 return (
                   <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                     <div className="relative">
-                      {msg.risk && (
-                        <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full z-10 ${style.dot} ${!isUser ? '-left-1 right-auto' : ''}`} />
-                      )}
+
                       <div
                         onClick={() => handleSelectMessage(msg)}
                         className={`max-w-[220px] p-2.5 rounded-2xl text-xs leading-relaxed transition-all duration-200 ${
