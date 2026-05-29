@@ -1,6 +1,30 @@
+/**
+ * Componente Sidebar (Barra Lateral de Navegación y Recursos).
+ * 
+ * Este componente proporciona una barra lateral de navegación fija que permite regresar a la pantalla de inicio
+ * y expone una colección organizada de tarjetas informativas clasificadas en dos secciones:
+ * "Portales de Apoyo" (institucionales) y "Noticias y Recursos" (educativos).
+ * Al hacer clic en cualquier tarjeta, se previene la redirección inmediata y en su lugar se despliega
+ * un modal enriquecido con pautas clave de acción directa y un enlace seguro al sitio oficial.
+ */
+
 import { useState } from 'react'
 import { AlertCircle, Home, X } from 'lucide-react'
 
+// ============================================================================
+// DICCIONARIO INFORMATIVO DE PORTALES Y NOTICIAS (INFO_DETAILS)
+// ============================================================================
+/**
+ * Almacena el contenido educativo y legal desplegado por los modales informativos.
+ * Cada clave representa un panel de información específico y cuenta con:
+ * - agency: Nombre del portal o tipo de recurso.
+ * - title: Título del recurso o noticia.
+ * - subtitle: Subtítulo descriptivo.
+ * - emoji: Emoji representativo para enriquecimiento visual.
+ * - content: Texto explicativo de base sobre la temática.
+ * - keyPoints: Listado de pautas clave de acción o hechos legales.
+ * - link: URL segura y de alta estabilidad (.gob.mx) para ampliación de información.
+ */
 const INFO_DETAILS = {
   inmujeres: {
     agency: "Inst. Nacional de las Mujeres",
@@ -102,12 +126,22 @@ const INFO_DETAILS = {
   }
 }
 
+// ============================================================================
+// COMPONENTE EXPORTADO PRINCIPAL
+// ============================================================================
 export default function Sidebar({ activeView, setActiveView }) {
+  // Estado local para almacenar qué modal informativo está activo en pantalla (null por defecto)
   const [activeModal, setActiveModal] = useState(null)
 
   return (
+    // Contenedor de la barra lateral ajustado a la pantalla, con scroll vertical interno independiente para evitar desplazamientos del layout global
     <div className="w-64 bg-gray-100 border-r border-gray-300 flex flex-col h-full overflow-hidden">
-      <div className="p-6 border-b border-gray-300 flex items-center gap-3 cursor-pointer flex-shrink-0" onClick={() => setActiveView('home')}>
+      
+      {/* Botón superior fijo de Retorno a Inicio */}
+      <div 
+        className="p-6 border-b border-gray-300 flex items-center gap-3 cursor-pointer flex-shrink-0 hover:bg-gray-200/50 transition-colors" 
+        onClick={() => setActiveView('home')}
+      >
         <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold">
           <Home size={20} />
         </div>
@@ -117,6 +151,7 @@ export default function Sidebar({ activeView, setActiveView }) {
         </div>
       </div>
       
+      {/* Panel intermedio desplazable para las tarjetas informativas */}
       <div className="p-4 flex-1 overflow-y-auto">
         <div className="flex items-center gap-2 mb-4 mt-2">
           <AlertCircle className="text-gray-700" size={20} />
@@ -124,9 +159,11 @@ export default function Sidebar({ activeView, setActiveView }) {
         </div>
         
         <div className="space-y-3">
-          {/* Seccion 1: Portales Oficiales */}
+          
+          {/* SECCIÓN 1: Portales Oficiales de Apoyo Institucional */}
           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 select-none">Portales de Apoyo</div>
           
+          {/* Tarjeta 1: INMUJERES */}
           <a
             href="https://www.gob.mx/inmujeres"
             onClick={(e) => { e.preventDefault(); setActiveModal('inmujeres'); }}
@@ -139,6 +176,7 @@ export default function Sidebar({ activeView, setActiveView }) {
             <p className="text-xs text-gray-600">Consulta el portal oficial de INMUJERES para acceder a programas de equidad, derechos digitales y erradicación de la violencia.</p>
           </a>
           
+          {/* Tarjeta 2: CONAVIM */}
           <a
             href="https://www.gob.mx/conavim"
             onClick={(e) => { e.preventDefault(); setActiveModal('conavim'); }}
@@ -151,6 +189,7 @@ export default function Sidebar({ activeView, setActiveView }) {
             <p className="text-xs text-gray-600">Revisa las campañas nacionales, recursos y mecanismos de prevención contra la violencia digital y de género.</p>
           </a>
           
+          {/* Tarjeta 3: SSPC */}
           <a
             href="https://www.gob.mx/sspc"
             onClick={(e) => { e.preventDefault(); setActiveModal('sspc'); }}
@@ -162,7 +201,8 @@ export default function Sidebar({ activeView, setActiveView }) {
             </h4>
             <p className="text-xs text-gray-600">Explora el sitio de la SSPC para informarte sobre ciberseguridad nacional y canales de reporte ciudadano.</p>
           </a>
-
+ 
+          {/* Tarjeta 4: Guardia Nacional */}
           <a
             href="https://www.gob.mx/guardianacional"
             onClick={(e) => { e.preventDefault(); setActiveModal('guardianacional'); }}
@@ -174,10 +214,11 @@ export default function Sidebar({ activeView, setActiveView }) {
             </h4>
             <p className="text-xs text-gray-600">Conoce las recomendaciones de la Guardia Nacional para prevenir ciberdelitos y proteger a la familia en internet.</p>
           </a>
-
-          {/* Seccion 2: Noticias e Informes */}
+ 
+          {/* SECCIÓN 2: Noticias e Informes Educativos */}
           <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-3 pb-1 select-none border-t border-gray-200">Noticias y Recursos</div>
-
+ 
+          {/* Tarjeta 5: Salud Mental */}
           <a
             href="https://www.gob.mx/salud"
             onClick={(e) => { e.preventDefault(); setActiveModal('salud_mental'); }}
@@ -189,7 +230,8 @@ export default function Sidebar({ activeView, setActiveView }) {
             </h4>
             <p className="text-xs text-gray-600">Efectos emocionales del hostigamiento cibernético persistente y pautas de autocuidado digital.</p>
           </a>
-
+ 
+          {/* Tarjeta 6: Homologación Penal */}
           <a
             href="https://www.gob.mx/segob"
             onClick={(e) => { e.preventDefault(); setActiveModal('leyes_mexico'); }}
@@ -201,7 +243,8 @@ export default function Sidebar({ activeView, setActiveView }) {
             </h4>
             <p className="text-xs text-gray-600">La violencia digital ha sido homologada penalmente en los 32 estados de la República Mexicana.</p>
           </a>
-
+ 
+          {/* Tarjeta 7: Deepfakes e IA */}
           <a
             href="https://www.gob.mx/sspc"
             onClick={(e) => { e.preventDefault(); setActiveModal('ciber_ia'); }}
@@ -215,14 +258,20 @@ export default function Sidebar({ activeView, setActiveView }) {
           </a>
         </div>
       </div>
-
-      {/* Info Modal */}
+ 
+      {/* ============================================================================
+          MODAL INTERACTIVO FLOTANTE (INFO MODAL)
+          ============================================================================ */}
       {activeModal && (() => {
         const info = INFO_DETAILS[activeModal];
         return (
+          // Contenedor principal con fondo oscuro traslúcido y desenfoque (backdrop-blur)
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            
+            {/* Cuerpo del Modal con restricciones de altura para soportar pantallas pequeñas mediante barra de desplazamiento interna */}
             <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-200 flex flex-col max-h-[90vh]">
-              {/* Header */}
+              
+              {/* Encabezado del Modal con degradado elegante */}
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-5 flex items-center justify-between text-white flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{info.emoji}</span>
@@ -231,6 +280,7 @@ export default function Sidebar({ activeView, setActiveView }) {
                     <h2 className="font-extrabold text-base leading-tight mt-0.5">{info.title}</h2>
                   </div>
                 </div>
+                {/* Botón de cierre superior */}
                 <button
                   onClick={() => setActiveModal(null)}
                   className="text-gray-300 hover:text-white transition-colors p-1 bg-white/10 rounded-lg cursor-pointer"
@@ -239,13 +289,14 @@ export default function Sidebar({ activeView, setActiveView }) {
                 </button>
               </div>
               
-              {/* Content */}
+              {/* Contenido Desplazable del Modal */}
               <div className="p-6 overflow-y-auto space-y-4">
                 <div>
                   <h4 className="font-bold text-gray-800 text-sm mb-1">{info.subtitle}</h4>
                   <p className="text-xs text-gray-600 leading-relaxed">{info.content}</p>
                 </div>
                 
+                {/* Panel de Pautas Clave de Acción */}
                 <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
                   <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
                     <span>💡</span> Pautas Clave de Acción:
@@ -261,7 +312,7 @@ export default function Sidebar({ activeView, setActiveView }) {
                 </div>
               </div>
               
-              {/* Footer */}
+              {/* Pie de página con botones de cierre y redirección externa segura */}
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3 flex-shrink-0">
                 <button
                   onClick={() => setActiveModal(null)}
