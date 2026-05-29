@@ -1,11 +1,25 @@
-// =====================================================
-// ROVIX Guard - background.js
-// Clasificador LOCAL de ciberacoso — SIN API, SIN LÍMITES
-// =====================================================
+/**
+ * ROVIX Guard - background.js
+ * 
+ * Script de segundo plano (Service Worker) para la extensión de navegador.
+ * Implementa un motor local de detección heurística de ciberacoso y hostigamiento en línea
+ * utilizando expresiones regulares y reglas de clasificación léxica. Al operar localmente,
+ * garantiza total privacidad y alto rendimiento sin depender de APIs de terceros.
+ */
 
-// ─── DICCIONARIO DE REGLAS POR CATEGORÍA ────────────────────────────────────
+// ============================================================================
+// DICCIONARIO DE REGLAS DE DETECCIÓN Y RECOMENDACIONES POR CATEGORÍA
+// ============================================================================
 
+/**
+ * Diccionario de categorías de riesgo. Cada categoría cuenta con:
+ * - label: Descripción sencilla del peligro identificado.
+ * - consejo: Pauta constructiva y de autocuidado emocional sugerida al usuario.
+ * - patterns: Lista de expresiones regulares para identificar patrones complejos o de múltiples palabras.
+ * - keywords: Colección de palabras clave e insultos comunes para coincidencia directa de palabras completas.
+ */
 const RULES = {
+  // Categoría 1: Amenazas directas o implícitas de violencia física o emocional
   AMENAZA: {
     label: "Contiene amenazas directas o implícitas de daño",
     consejo: "Expresar enojo sin amenazar: 'Estoy muy molesto con lo que pasó y necesitamos hablarlo.'",
@@ -29,6 +43,7 @@ const RULES = {
     ],
   },
 
+  // Categoría 2: Insultos vulgares, adjetivos degradantes y lenguaje hostil
   INSULTO: {
     label: "Contiene insultos y lenguaje degradante",
     consejo: "Intenta describir el comportamiento que te molesta en lugar de atacar a la persona.",
@@ -55,6 +70,7 @@ const RULES = {
     ],
   },
 
+  // Categoría 3: Humillación, descalificación sistemática y ataques al autoestima
   HUMILLACION: {
     label: "Contiene humillación o degradación intencional",
     consejo: "Recuerda que puedes expresar tu frustración sin atacar la dignidad de la otra persona.",
@@ -76,6 +92,7 @@ const RULES = {
     ],
   },
 
+  // Categoría 4: Expresiones discriminatorias, xenofobia, homofobia y racismo
   DISCRIMINACION: {
     label: "Contiene lenguaje discriminatorio por raza, género u orientación",
     consejo: "El lenguaje discriminatorio causa daño real. Intenta expresarte sin atacar características de las personas.",
@@ -93,6 +110,7 @@ const RULES = {
     ],
   },
 
+  // Categoría 5: Acoso persistente, chantaje, sextorsión y persecución digital
   ACOSO: {
     label: "Contiene comportamiento de acoso o persecución",
     consejo: "Si tienes un conflicto con alguien, lo mejor es buscar mediación o alejarse de la situación.",
@@ -109,6 +127,7 @@ const RULES = {
     ],
   },
 
+  // Categoría 6: Culpa coercitiva y manipulación emocional severa
   MANIPULACION: {
     label: "Contiene tácticas de manipulación emocional",
     consejo: "La comunicación sana no involucra culpa ni manipulación. Expresa tus necesidades de forma directa y honesta.",
@@ -128,11 +147,19 @@ const RULES = {
   },
 };
 
-// Generar Regex de forma dinámica para las keywords para tener precisión de palabra (\b)
+// ============================================================================
+// INICIALIZACIÓN: COMPILACIÓN DINÁMICA DE REGLAS DE PALABRAS CLAVE (KEYWORDS)
+// ============================================================================
+
+// Se recorren las categorías del diccionario para convertir las cadenas de keywords
+// en expresiones regulares precisas, rodeadas de delimitadores de palabra (\b) para
+// evitar falsas coincidencias con subcadenas integradas en otras palabras.
 for (const cat in RULES) {
   if (RULES[cat].keywords) {
     RULES[cat].keywordPatterns = RULES[cat].keywords.map((kw) => {
+      // Escapa caracteres especiales regex por seguridad
       const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      // Compila la expresión con límites de palabra e insensible a mayúsculas
       return new RegExp(`\\b${escaped}\\b`, "gi");
     });
   } else {
@@ -140,11 +167,19 @@ for (const cat in RULES) {
   }
 }
 
-// ─── ANÁLISIS ──────────────────────────────────────────────────────────
+// ============================================================================
+// FUNCIÓN PRINCIPAL DE ANÁLISIS HEURÍSTICO LOCAL
+// ============================================================================
 
+/**
+ * Analiza un bloque de texto en busca de patrones hostiles definidos en RULES.
+ * @param {string} text - El texto a evaluar introducido por el usuario.
+ * @returns {object} Un objeto detallado con el diagnóstico, banderas de riesgo y sugerencias.
+ */
 function analyzeLocally(text) {
   const trimmed = text.trim();
 
+  // Si el texto es nulo o demasiado corto, se descarta el análisis para evitar ruido
   if (!trimmed || trimmed.length < 5) {
     return {
       es_nocivo: false,
@@ -161,27 +196,29 @@ function analyzeLocally(text) {
   const explicaciones = [];
   let consejoFinal = "";
 
+  // Se evalúa de manera iterativa cada categoría configurada en el motor
   for (const [cat, rule] of Object.entries(RULES)) {
     let hits = 0;
     const catFragments = [];
 
-    // Validar Patterns regulares
+    // 1. Evalúa expresiones regulares complejas (patterns)
     for (const pattern of rule.patterns) {
       pattern.lastIndex = 0;
       const matches = trimmed.match(pattern);
       if (matches) {
         hits += matches.length;
+        // Almacena las coincidencias encontradas para reporte
         matches.slice(0, 2).forEach((m) => catFragments.push(m.trim()));
       }
     }
 
-    // Validar Keywords usando sus Regex (asegura \b)
+    // 2. Evalúa coincidencia de palabras clave exactas (keywords compiled regexes)
     for (const kwPattern of rule.keywordPatterns) {
       kwPattern.lastIndex = 0;
       const kwMatches = trimmed.match(kwPattern);
       if (kwMatches) {
-        // Solo contar si no está ya contenido en fragmentos más grandes detectados
         const matchStr = kwMatches[0].trim();
+        // Evita duplicar fragmentos si ya fueron cubiertos por patrones más amplios
         const yaDetectado = catFragments.some((f) =>
           f.toLowerCase().includes(matchStr.toLowerCase())
         );
@@ -192,16 +229,19 @@ function analyzeLocally(text) {
       }
     }
 
+    // Si se encontró al menos una coincidencia, se marca la categoría activa
     if (hits > 0) {
       categorias.push(cat);
       catFragments.slice(0, 3).forEach((f) => fragmentos.add(f));
       explicaciones.push(rule.label);
+      // Se conserva el consejo de la categoría de mayor relevancia (primera detectada)
       if (!consejoFinal) consejoFinal = rule.consejo;
     }
   }
 
   const es_nocivo = categorias.length > 0;
 
+  // Si es nocivo, se genera dinámicamente un mensaje asertivo y libre de toxicidad
   const mensaje_reformulado = es_nocivo
     ? generarReformulado(trimmed, categorias, Array.from(fragmentos))
     : trimmed;
@@ -219,13 +259,22 @@ function analyzeLocally(text) {
   };
 }
 
-// ─── REFORMULADOR DE MENSAJES ────────────────────────────────────────────────
+// ============================================================================
+// MOTOR DE REFORMULACIÓN ASERTIVA Y CONSTRUCTIVA
+// ============================================================================
 
+/**
+ * Reconstruye un mensaje agresivo reemplazando su contenido tóxico por una 
+ * alternativa asertiva que comunique límites o intenciones de manera respetuosa.
+ * @param {string} texto - Mensaje original del usuario.
+ * @param {string[]} categorias - Categorías de acoso detectadas.
+ * @param {string[]} fragmentos_problematicos - Palabras o frases tóxicas identificadas.
+ * @returns {string} Mensaje reformulado.
+ */
 function generarReformulado(texto, categorias, fragmentos_problematicos) {
-  // Limpiamos el texto de los fragmentos tóxicos detectados
+  // 1. Limpieza básica: Elimina los fragmentos altamente tóxicos directamente del texto
   let textoLimpio = texto;
   fragmentos_problematicos.forEach((f) => {
-    // Escapar para evitar errores si el fragmento tiene símbolos
     const escapedF = f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(`\\b${escapedF}\\b`, "gi");
     textoLimpio = textoLimpio.replace(regex, "");
@@ -233,7 +282,7 @@ function generarReformulado(texto, categorias, fragmentos_problematicos) {
 
   const limpioLower = textoLimpio.toLowerCase();
 
-  // Diccionario de intenciones mediante Regex para evitar falsos positivos
+  // 2. Mapeo semántico de intenciones: Reemplazos asertivos contextuales
   const intents = [
     {
       regex: /\b(no\s+me\s+importa|me\s+da\s+igual|qu[eé]\s+me\s+importa)\b/gi,
@@ -265,14 +314,14 @@ function generarReformulado(texto, categorias, fragmentos_problematicos) {
     }
   ];
 
-  // Evaluar intenciones sobre el texto original y el limpio
+  // Si el texto limpio coincide con alguna intención básica, se utiliza esa respuesta directa
   for (const intent of intents) {
     if (intent.regex.test(limpioLower) || intent.regex.test(texto.toLowerCase())) {
       return intent.respuesta;
     }
   }
 
-  // Respuestas constructivas y asertivas cortas
+  // 3. Fallbacks asertivos según la categoría predominante (versiones cortas)
   const cortas = {
     AMENAZA: "Estoy percibiendo mucha hostilidad. Necesito espacio antes de que continuemos esta conversación.",
     INSULTO: "Me siento frustrado por esta interacción. Prefiero que retomemos la conversación cuando ambos estemos más calmados.",
@@ -282,7 +331,7 @@ function generarReformulado(texto, categorias, fragmentos_problematicos) {
     MANIPULACION: "Siento presión en esta situación. Prefiero que detengamos la charla aquí."
   };
 
-  // Respuestas constructivas y asertivas largas
+  // 4. Fallbacks asertivos según la categoría predominante (versiones largas)
   const largas = {
     AMENAZA: "Percibo mucha molestia en tus mensajes, pero recurrir a agresiones no solucionará el problema. Hablemos de esto más adelante con calma.",
     INSULTO: "Entiendo que haya frustración, pero el uso de lenguaje ofensivo empeora la situación. Solicito que nos comuniquemos desde el respeto mutuo.",
@@ -295,6 +344,7 @@ function generarReformulado(texto, categorias, fragmentos_problematicos) {
   const esLargo = texto.split(/\s+/).length > 8;
   const prioridad = ["AMENAZA", "ACOSO", "MANIPULACION", "HUMILLACION", "DISCRIMINACION", "INSULTO"];
 
+  // Devuelve la respuesta preestablecida de la categoría más severa encontrada
   for (const cat of prioridad) {
     if (categorias.includes(cat)) {
       return esLargo ? largas[cat] : cortas[cat];
@@ -304,24 +354,33 @@ function generarReformulado(texto, categorias, fragmentos_problematicos) {
   return "Creo que podemos expresar nuestra postura de una manera más profesional y respetuosa para evitar malentendidos.";
 }
 
-// ─── LISTENER DE MENSAJES ────────────────────────────────────────────────────
+// ============================================================================
+// ESCUCHA Y COMUNICACIÓN DE EVENTOS DE CHROME EXTENSION
+// ============================================================================
 
+/**
+ * Listener global para recibir mensajes del script de contenido (content.js).
+ * Recibe peticiones de tipo 'ANALYZE_TEXT', valida si la extensión está habilitada,
+ * ejecuta el análisis local y devuelve la respuesta al remitente.
+ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "ANALYZE_TEXT") {
+    // Consulta la configuración guardada del usuario
     chrome.storage.sync.get(["extensionEnabled"], (data) => {
+      // Si la extensión ha sido explícitamente desactivada, cancela la ejecución
       if (data.extensionEnabled === false) {
         sendResponse({ success: false, error: "EXTENSION_DISABLED" });
         return;
       }
 
       try {
+        // Ejecuta el análisis local en segundo plano
         const result = analyzeLocally(message.text);
         sendResponse({ success: true, data: result });
       } catch (err) {
         sendResponse({ success: false, error: err.message });
       }
     });
-    return true; // Canal abierto para respuesta asíncrona
+    return true; // Mantiene el canal de comunicación abierto para respuestas asíncronas
   }
 });
-

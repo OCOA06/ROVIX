@@ -1,20 +1,41 @@
+/**
+ * Componente PhotoFilter (Filtro Antirobo de Imágenes).
+ * Provee herramientas para la inmunización adversarial de imágenes contra modelos de IA generativa
+ * y la verificación esteganográfica de marcas de seguridad Rovix en archivos cargados.
+ */
+
 import { useState, useRef } from 'react'
 import { ArrowLeft, Upload, Image as ImageIcon, Download, Copy, CheckCircle, Eye, ShieldCheck, ShieldAlert, Zap, Lock } from 'lucide-react'
 import axios from 'axios'
 
 export default function PhotoFilter({ onBack }) {
+  // Estados para la carga y previsualización de imágenes originales
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+
+  // Estados para almacenar el blob e URL del archivo procesado e inmunizado
   const [processedBlob, setProcessedBlob] = useState(null)
   const [processedUrl, setProcessedUrl] = useState(null)
+
+  // Estados de carga (loaders) para el procesamiento y la verificación
   const [loading, setLoading] = useState(false)
   const [verifyLoading, setVerifyLoading] = useState(false)
+
+  // Estado para la confirmación visual de copiado al portapapeles
   const [copied, setCopied] = useState(false)
+
+  // Estados de resultados finales del filtro y de la verificación esteganográfica
   const [verifyResult, setVerifyResult] = useState(null)
   const [filterApplied, setFilterApplied] = useState(false)
+
+  // Referencias a los inputs de tipo file del DOM para disparo manual de clics
   const fileInputRef = useRef(null)
   const verifyInputRef = useRef(null)
 
+  /**
+   * Manejador de cambio de archivo para la imagen original a proteger.
+   * Inicializa los estados y crea una URL temporal para previsualización local.
+   */
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -27,6 +48,10 @@ export default function PhotoFilter({ onBack }) {
     }
   }
 
+  /**
+   * Envía la imagen seleccionada al backend FastAPI para aplicar la protección.
+   * La respuesta es recibida como Blob y se mapea a una URL local para su descarga o previsualización.
+   */
   const handleProcessImage = async () => {
     if (!selectedFile) return
     setLoading(true)
@@ -36,8 +61,9 @@ export default function PhotoFilter({ onBack }) {
     formData.append('file', selectedFile)
 
     try {
+      // Envía POST multipart a la API /api/filter del backend local
       const response = await axios.post('http://localhost:8000/api/filter', formData, {
-        responseType: 'blob'
+        responseType: 'blob' // Indica que el formato de retorno esperado es un archivo binario
       })
       const blob = response.data
       const url = URL.createObjectURL(blob)
@@ -45,11 +71,14 @@ export default function PhotoFilter({ onBack }) {
       setProcessedUrl(url)
       setFilterApplied(true)
     } catch (error) {
-      console.error(error)
+      console.error("Error al procesar el filtro de imagen:", error)
     }
     setLoading(false)
   }
 
+  /**
+   * Ejecuta la descarga local de la imagen protegida en el navegador del usuario.
+   */
   const handleDownload = () => {
     if (!processedBlob) return
     const a = document.createElement('a')
@@ -58,6 +87,10 @@ export default function PhotoFilter({ onBack }) {
     a.click()
   }
 
+  /**
+   * Copia la imagen protegida (en formato PNG) directamente al portapapeles del sistema del usuario.
+   * Si el navegador no tiene soporte ClipboardItem para imágenes, ejecuta una descarga fallback.
+   */
   const handleCopy = async () => {
     if (!processedBlob) return
     try {
@@ -71,6 +104,10 @@ export default function PhotoFilter({ onBack }) {
     }
   }
 
+  /**
+   * Envía un archivo de imagen al endpoint de verificación para revisar si
+   * cuenta con la marca de agua esteganográfica LSB activa en sus bits menos significativos.
+   */
   const handleVerifyChange = async (e) => {
     if (!e.target.files || !e.target.files[0]) return
     setVerifyLoading(true)
@@ -81,17 +118,19 @@ export default function PhotoFilter({ onBack }) {
       const res = await axios.post('http://localhost:8000/api/verify', formData)
       setVerifyResult(res.data)
     } catch {
-      setVerifyResult({ protected: false, message: 'Error al verificar la imagen.' })
+      setVerifyResult({ protected: false, message: 'Error de comunicación al verificar la imagen.' })
     }
     setVerifyLoading(false)
   }
 
   return (
     <div className="max-w-5xl mx-auto">
-      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-6 font-semibold transition-colors">
+      {/* Botón de retorno al inicio */}
+      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-6 font-semibold transition-colors cursor-pointer">
         <ArrowLeft size={20} className="mr-2" /> Volver al inicio
       </button>
 
+      {/* Tarjeta del filtro de protección adversarial */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-8 mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
@@ -103,6 +142,7 @@ export default function PhotoFilter({ onBack }) {
           </div>
         </div>
 
+        {/* Bloque explicativo de funcionamiento técnico */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8 mt-4">
           <h3 className="font-semibold text-gray-700 text-sm mb-2 flex items-center gap-2">
             <Zap size={14} /> ¿Cómo funciona?
@@ -116,8 +156,10 @@ export default function PhotoFilter({ onBack }) {
           </p>
         </div>
 
+        {/* Sección de carga (Izquierda) y descarga (Derecha) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
+          {/* Columna Izquierda: Imagen Original */}
           <div className="flex flex-col">
             <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">📁 Imagen original</p>
             <div
@@ -145,7 +187,7 @@ export default function PhotoFilter({ onBack }) {
             <button
               onClick={handleProcessImage}
               disabled={!selectedFile || loading}
-              className={`mt-4 py-3.5 rounded-lg font-bold text-white transition-all duration-200 flex items-center justify-center gap-2 ${!selectedFile || loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-900 hover:shadow-lg active:scale-[0.98]'}`}
+              className={`mt-4 py-3.5 rounded-lg font-bold text-white transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${!selectedFile || loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-900 hover:shadow-lg active:scale-[0.98]'}`}
             >
               {loading ? (
                 <>
@@ -158,6 +200,7 @@ export default function PhotoFilter({ onBack }) {
             </button>
           </div>
 
+          {/* Columna Derecha: Imagen Protegida */}
           <div className="flex flex-col">
             <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">🛡️ Imagen protegida</p>
             <div className="border-2 border-gray-200 rounded-xl h-72 flex flex-col items-center justify-center bg-gray-50 overflow-hidden relative">
@@ -181,13 +224,13 @@ export default function PhotoFilter({ onBack }) {
               <div className="mt-4 flex gap-3">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="flex-1 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download size={18} /> Descargar
                 </button>
                 <button
                   onClick={handleCopy}
-                  className="flex-1 py-3 rounded-lg font-bold border-2 border-gray-800 text-gray-800 hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-3 rounded-lg font-bold border-2 border-gray-800 text-gray-800 hover:bg-gray-100 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {copied ? <><CheckCircle size={18} className="text-green-600" /> Copiada</> : <><Copy size={18} /> Copiar</>}
                 </button>
@@ -197,6 +240,7 @@ export default function PhotoFilter({ onBack }) {
 
         </div>
 
+        {/* Notificación de éxito en la inmunización */}
         {filterApplied && (
           <div className="mt-8 bg-green-50 border-l-4 border-green-500 p-5 rounded-lg flex items-start gap-4">
             <ShieldCheck className="text-green-600 flex-shrink-0 mt-0.5" size={24} />
@@ -213,6 +257,7 @@ export default function PhotoFilter({ onBack }) {
         )}
       </div>
 
+      {/* Tarjeta inferior: Verificación esteganográfica de marcas de seguridad */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-8">
         <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
           <Eye size={20} /> Verificar protección de una imagen
@@ -222,7 +267,7 @@ export default function PhotoFilter({ onBack }) {
         <button
           onClick={() => verifyInputRef.current.click()}
           disabled={verifyLoading}
-          className="py-2.5 px-6 rounded-lg font-bold border-2 border-gray-700 text-gray-700 hover:bg-gray-100 transition-all flex items-center gap-2"
+          className="py-2.5 px-6 rounded-lg font-bold border-2 border-gray-700 text-gray-700 hover:bg-gray-100 transition-all flex items-center gap-2 cursor-pointer"
         >
           {verifyLoading ? (
             <>
