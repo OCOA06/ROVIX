@@ -479,13 +479,10 @@ def add_adversarial_perturbation(image: Image.Image, strength: float = 25.0) -> 
     phase_shift = rng.uniform(0, 2 * np.pi)
     ch_perturbation += np.sin(xx * 3.2 + phase_shift) * np.cos(yy * 2.8 + phase_shift) * strength * 0.05
 
-    img_array[:, :, ch] += ch_perturbation
+    # Acota estrictamente la perturbación para que sea 100% invisible para el ojo humano (máximo +-2 en escala de 255)
+    ch_perturbation = np.clip(ch_perturbation, -2.0, 2.0)
 
-  # 5. Inyección dispersa de ruido impulsivo de sal y pimienta de baja visibilidad (3% de píxeles)
-  pixel_mask = rng.random((h, w)) < 0.03
-  for ch in range(c):
-    flip = rng.choice([-strength * 0.8, strength * 0.8], size=(h, w))
-    img_array[:, :, ch] += pixel_mask * flip
+    img_array[:, :, ch] += ch_perturbation
 
   # Recorta y convierte los valores flotantes al rango válido [0-255] de enteros de 8 bits (uint8)
   return Image.fromarray(np.clip(img_array, 0, 255).astype(np.uint8))
@@ -540,43 +537,7 @@ def embed_protection_lsb(image: Image.Image) -> Image.Image:
   return image
 
 
-def check_protection_lsb(image: Image.Image) -> bool:
-  """
-  Extrae la marca de agua oculta LSB de los píxeles iniciales de la imagen 
-  y la compara con el marcador PROTECTION_MARKER para verificar si la imagen
-  ha sido procesada con éxito por el filtro de protección de ROVIX.
-  
-  :param image: Objeto imagen a verificar.
-  :return: Booleano indicando la presencia confirmada de la firma.
-  """
-  pixels = image.load()
-  width, height = image.size
-  total_bits = len(PROTECTION_MARKER) * 8
-  extracted_bits = []
-
-  # Extrae de forma secuencial el bit menos significativo de los canales RGB
-  for y_pos in range(height):
-    for x_pos in range(width):
-      if len(extracted_bits) >= total_bits:
-        break
-      r, g, b = pixels[x_pos, y_pos]
-      extracted_bits.append(r & 1)
-      if len(extracted_bits) < total_bits:
-        extracted_bits.append(g & 1)
-      if len(extracted_bits) < total_bits:
-        extracted_bits.append(b & 1)
-    if len(extracted_bits) >= total_bits:
-      break
-
-  # Reconstruye los bytes originales a partir de los bits recolectados
-  extracted_bytes = bytearray()
-  for i in range(0, total_bits, 8):
-    byte = 0
-    for j in range(8):
-      byte = (byte << 1) | extracted_bits[i + j]
-    extracted_bytes.append(byte)
-
-  return bytes(extracted_bytes) == PROTECTION_MARKER
+# La verificación esteganográfica LSB ha sido removida al simplificar la interfaz del Filtro Antirobo
 
 
 # ============================================================================
@@ -619,32 +580,4 @@ async def apply_filter(file: UploadFile = File(...)):
     raise HTTPException(status_code=500, detail=str(e))
 
 
-# ============================================================================
-# ENDPOINT: VERIFICACIÓN DE FIRMA DIGITAL EN FOTOS
-# ============================================================================
-
-@app.post("/api/verify")
-async def verify_image(file: UploadFile = File(...)):
-  """
-  Analiza los bits de la imagen cargada para determinar si cuenta con la marca 
-  LSB de seguridad digital activa, reportando su estado al usuario.
-  """
-  try:
-    contents = await file.read()
-    image = Image.open(io.BytesIO(contents)).convert("RGB")
-    
-    # Valida si la firma digital coincide
-    is_protected = check_protection_lsb(image)
-    
-    if is_protected:
-      return {
-        "protected": True,
-        "message": "Esta imagen tiene proteccion ROVIX activa. Contiene marca digital y perturbacion adversarial.",
-      }
-    else:
-      return {
-        "protected": False,
-        "message": "Esta imagen NO tiene proteccion ROVIX o fue modificada/corrompida.",
-      }
-  except Exception as e:
-    raise HTTPException(status_code=500, detail=str(e))
+# El endpoint de verificación de imágenes ha sido removido al simplificar la interfaz del Filtro Antirobo

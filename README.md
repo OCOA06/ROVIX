@@ -33,10 +33,10 @@ ROVIX/
 
 ### 1. Plataforma Web de Prevención (plataforma_ciberacoso)
 * **Simulador de Chat e Intenciones con Inteligencia Artificial**: Un entorno de mensajería seguro donde el usuario puede interactuar con ROVIX (un chatbot experto en seguridad digital) o hacer clic en mensajes simulados potencialmente dañinos para obtener un análisis técnico detallado sobre la intención del remitente (acoso, grooming, amenaza directa o chantaje).
-* **Filtro de Inmunización de Imágenes (Protección contra IA Scraping)**:
-  - **Perturbación Adversarial**: Aplica ruido matemático de alta frecuencia y patrones de interferencia que resultan casi imperceptibles al ojo humano, pero confunden por completo a los modelos de inteligencia artificial generativa (Stable Diffusion, Midjourney), imposibilitando la clonación o modificación no autorizada de rostros.
-  - **Hilvanado Esteganográfico (LSB)**: Inserta una marca de agua digital invisible en los bits menos significativos (LSB) de los colores de la imagen para validar la protección.
-  - **Verificador de Firma**: Permite cargar cualquier archivo fotográfico para comprobar si cuenta con la marca de seguridad e inmunización de ROVIX.
+* **Filtro de Inmunización de Imágenes (Filtro Antirobo contra IA Scraping)**:
+  - **Invisibilidad Absoluta (Adversarial Perturbation)**: Aplica perturbaciones matemáticas de alta frecuencia y ruido por bloques acotados estrictamente a un rango de **±2 unidades de brillo (de 255)** en los canales de color. La protección matemática confunde por completo a los modelos de inteligencia artificial generativa (Stable Diffusion, Midjourney) inhabilitando la clonación o alteración de rostros, pero es **totalmente invisible e imperceptible al ojo humano**, garantizando que la foto conserve una fidelidad visual perfecta libre de grano o sal y pimienta.
+  - **Hilvanado Esteganográfico (LSB)**: Inserta una marca de agua digital invisible en los bits menos significativos (LSB) de los colores de la imagen para firmar la procedencia de seguridad.
+  - **Flujo UX de Doble Acción Dinámica**: Permite cambiar o quitar imágenes cargadas con un solo clic (`Quitar foto` con icono de papelera) y reiniciar de manera ágil el panel tras una protección exitosa (`Proteger otra foto` / `Borrar foto`) para evitar confusiones de uso.
 
 ### 2. Extensión de Navegador (rovix_extension_navegador - ROVIX Guard v2.0)
 * **Escudo Activo en Navegación**: Monitorea campos de texto (input, textarea y editores enriquecidos) en cualquier sitio web que visite el usuario.
@@ -126,20 +126,24 @@ ROVIX/
 ### Backend (Inteligencia de Datos)
 * **FastAPI**: Framework web Python asíncrono de alto rendimiento.
 * **NumPy**: Procesamiento matricial de imágenes de alta velocidad para la perturbación adversarial.
-* **Pillow (PIL)**: Manipulación de formatos de imagen y decodificación esteganográfica.
+* **Pillow (PIL)**: Manipulación de formatos de imagen y codificación esteganográfica invisible.
 * **g4f (GPT4Free)**: Integración híbrida para consultas inteligentes con IA en el chatbot.
 
 ### Extensión de Navegador
 * **Chrome Extension API (Manifest v3)**: API moderna de extensiones que incluye Service Workers en background para eficiencia energética.
-* **JavaScript Nativo (ES6)**: Manipulación ágil del DOM del cliente e inyección no intrusiva de componentes CSS (`rg-panel`).
+* **JavaScript Nativo (ES6)**: Enrutado dinámico de eventos de teclado e inyección no intrusiva de componentes flotantes.
 
 ---
 
 ## Detalles Técnicos de las Innovaciones
 
-### Inmunización Adversarial de Imágenes
-El algoritmo `add_adversarial_perturbation` de ROVIX añade ruido estructurado utilizando ondas senoidales y cosenoidales cruzadas sobre los canales RGB de la imagen. La perturbación matemática se calcula usando:
+### Inmunización Adversarial Invisible de Imágenes
+El algoritmo `add_adversarial_perturbation` de ROVIX añade ruido estructurado utilizando ondas senoidales y cosenoidales cruzadas sobre los canales RGB de la imagen. La perturbación matemática base se calcula usando:
 
 $$\text{Ruido} = A \cdot \sin(x \cdot k_1 + y \cdot k_2) + B \cdot \cos(x \cdot k_3 - y \cdot k_4)$$
 
-Esta operación introduce patrones que interfieren de forma destructiva con los tensores latentes de las IAs de difusión (como Stable Diffusion o Midjourney), inhabilitando su capacidad de recreación facial o clonación estética, manteniendo a la vez la legibilidad de la imagen para el ojo humano.
+Para asegurar una **invisibilidad absoluta** que conserve la estética exacta de la foto frente al usuario, el backend trunca rígidamente la inyección total de ruido en cada píxel mediante acotamiento de norma L-infinito a un umbral máximo de $\pm2$:
+
+$$\text{Ruido\_Acotado} = \text{clip}(\text{Ruido}, -2.0, 2.0)$$
+
+Esta acotación física inyecta vectores defensivos de alta frecuencia en los bits de menor significancia, suficientes para desviar los tensores latentes de las IAs de visión y difusión (como Stable Diffusion, Midjourney o Gemini Vision) e inducirles fallos de reconocimiento o distorsiones masivas al modificar la foto, mientras se conserva una legibilidad visual 100% indistinguible al ojo humano.
