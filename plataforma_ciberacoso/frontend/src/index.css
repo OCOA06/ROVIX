@@ -1,16 +1,47 @@
+/* ============================================================================
+   JUSTIFICACIÓN DEL USO DE COLORES - ROVIX (ODS 5 & IDENTIDAD DE MARCA)
+   
+   🔴 Rojo ODS 5 (--color-ods-red / --color-ods-red-vibrant):
+      Representa la fuerza, la pasión y el empoderamiento. Es el color oficial 
+      del Objetivo de Desarrollo Sostenible 5 (ODS 5) de la ONU, que busca la 
+      igualdad de género y la eliminación de la violencia contra mujeres y niñas. 
+      En diseño, atrae la atención y transmite energía y acción, perfecto para 
+      una temática que invita a denunciar, visibilizar y transformar.
+      
+   🟠 Naranja (--color-ods-orange):
+      Simboliza la esperanza y el cambio positivo. Es el color oficial de la ONU 
+      en campañas globales contra la violencia de género, tales como "Pinta el 
+      mundo de naranja" (Orange the World).
+      
+   🟤 Marrón y tonos tierra (--color-ods-brown-dark / --color-ods-brown-medium / --color-ods-brown-light):
+      Representan estabilidad, confianza y empatía. Funcionan como una base sólida 
+      para que los tonos vibrantes de rojo y naranja resalten sin saturar visualmente. 
+      Aportan una sensación de seriedad, calidez y compromiso ético y social.
+      
+   ⚪ Beige y blanco (--color-ods-beige / --color-ods-beige-light / --color-white):
+      Aportan una claridad absoluta y un descanso visual indispensable. Refuerzan 
+      las ideas de transparencia, accesibilidad y honestidad, fundamentales en la 
+      comunicación sobre derechos humanos y protección digital.
+============================================================================ */
+
 @import "tailwindcss";
 
 @theme {
-  --color-tirant-dark: #333333;
-  --color-tirant-gray: #666666;
-  --color-tirant-light: #f5f5f5;
-  --color-tirant-border: #e0e0e0;
+  /* Paleta de Colores ODS 5 e Identidad ROVIX */
+  --color-ods-red: #e5243b;          /* Rojo ODS 5 Oficial */
+  --color-ods-red-vibrant: #ff3131;  /* Rojo del nuevo logotipo oficial */
+  --color-ods-orange: #ef7d00;       /* Naranja Campaña de Erradicación */
+  --color-ods-brown-dark: #3e2a1f;   /* Marrón profundo (base seria) */
+  --color-ods-brown-medium: #8b7355; /* Marrón medio para detalles */
+  --color-ods-brown-light: #d2b48c;  /* Tono arena para bordes y tarjetas */
+  --color-ods-beige: #faf6f0;        /* Beige cálido para fondos de descanso */
+  --color-ods-beige-light: #fdfbf9;  /* Beige extra claro */
 }
 
 @layer base {
   body {
-    background-color: white;
-    color: #111827;
+    background-color: var(--color-ods-beige-light);
+    color: var(--color-ods-brown-dark);
     margin: 0;
     font-family: sans-serif;
   }

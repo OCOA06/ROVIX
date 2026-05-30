@@ -127,33 +127,48 @@ export default function PhotoFilter({ onBack }) {
     }
   }
 
+  /* 
+     Justificación del uso de colores en PhotoFilter:
+     - Volver y textos (text-ods-brown-medium hover:text-ods-brown-dark):
+       Proporciona una lectura descansada y empática, representativa de los temas de concientización social.
+     - Botón principal de "Aplicar Filtro" y "Descargar" (bg-ods-red hover:bg-ods-red-vibrant):
+       El Rojo ODS 5 incentiva a la acción decisiva y destaca las herramientas clave de seguridad.
+     - Área de carga y previsualización (bg-ods-beige/25 border-ods-brown-light/40 hover:border-ods-red):
+       Utiliza tonos de base beige/tierra para brindar descanso visual y guiar las interacciones mediante micro-animaciones.
+     - Caja explicativa "¿Cómo funciona?" (bg-ods-beige/50 border-ods-brown-light/30):
+       Armoniza con el entorno, dando seriedad y compromiso.
+  */
+
   return (
     <div className="max-w-5xl mx-auto">
       {/* Botón superior de retorno */}
-      <button onClick={onBack} className="flex items-center text-gray-600 hover:text-gray-900 mb-6 font-semibold transition-colors cursor-pointer">
+      <button 
+        onClick={onBack} 
+        className="flex items-center text-ods-brown-medium hover:text-ods-brown-dark mb-6 font-semibold transition-colors cursor-pointer"
+      >
         <ArrowLeft size={20} className="mr-2" /> Volver al inicio
       </button>
 
       {/* Tarjeta del Módulo de Protección de Imágenes */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-8 mb-8">
+      <div className="bg-white border-2 border-ods-brown-light/30 rounded-2xl p-8 mb-8 shadow-md">
         
         {/* Cabecera del Panel */}
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-ods-red flex items-center justify-center shadow-sm">
             <Lock size={20} className="text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Filtro Antirobo de Imágenes</h2>
-            <p className="text-xs text-gray-500">Protección adversarial invisible contra IA</p>
+            <h2 className="text-2xl font-extrabold text-ods-brown-dark">Filtro Antirobo de Imágenes</h2>
+            <p className="text-xs text-ods-brown-medium font-semibold">Protección adversarial invisible contra Inteligencias Artificiales</p>
           </div>
         </div>
 
         {/* Panel Explicativo del Funcionamiento Técnico */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-8 mt-4">
-          <h3 className="font-semibold text-gray-700 text-sm mb-2 flex items-center gap-2">
-            <Zap size={14} /> ¿Cómo funciona?
+        <div className="bg-ods-beige/50 border border-ods-brown-light/30 rounded-xl p-5 mb-8 mt-4 leading-relaxed">
+          <h3 className="font-bold text-ods-brown-dark text-sm mb-2 flex items-center gap-2">
+            <Zap size={14} className="text-ods-orange animate-pulse" /> ¿Cómo funciona?
           </h3>
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="text-ods-brown-medium text-sm leading-relaxed">
             Aplicamos <strong>perturbación adversarial matemática</strong> a los canales de color de tu imagen de forma
             extremadamente sutil. Mediante frecuencias de onda complejas y ruido por bloques restringidos
             a un rango imperceptible, logramos un blindaje <strong>100% invisible para el ojo humano</strong>.
@@ -168,9 +183,9 @@ export default function PhotoFilter({ onBack }) {
 
           {/* Columna Izquierda: Imagen Original */}
           <div className="flex flex-col">
-            <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">📁 Imagen original</p>
+            <p className="text-sm font-bold text-ods-brown-dark mb-2 flex items-center gap-2 select-none">📁 Imagen original</p>
             <div
-              className="border-2 border-dashed border-gray-300 rounded-xl h-72 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:bg-gray-100 hover:border-gray-400 transition-all relative overflow-hidden group"
+              className="border-2 border-dashed border-ods-brown-light/40 rounded-xl h-72 flex flex-col items-center justify-center bg-ods-beige/25 cursor-pointer hover:bg-ods-beige/65 hover:border-ods-red transition-all relative overflow-hidden group"
               onClick={() => {
                 // Solo dispara la carga si no se ha aplicado el filtro aún para evitar confusiones
                 if (!filterApplied) {
@@ -182,9 +197,9 @@ export default function PhotoFilter({ onBack }) {
                 <img src={previewUrl} alt="Original" className="w-full h-full object-contain" />
               ) : (
                 <>
-                  <Upload size={40} className="text-gray-400 mb-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-gray-600 font-semibold">Haz clic para subir una foto</span>
-                  <span className="text-xs text-gray-400 mt-2">JPG, PNG, WEBP — cualquier tamaño</span>
+                  <Upload size={40} className="text-ods-brown-medium/50 mb-4 group-hover:scale-110 transition-transform duration-200" />
+                  <span className="text-ods-brown-dark font-bold text-sm">Haz clic para subir una foto</span>
+                  <span className="text-xs text-ods-brown-medium mt-2">JPG, PNG, WEBP — cualquier tamaño</span>
                 </>
               )}
               <input
@@ -204,13 +219,13 @@ export default function PhotoFilter({ onBack }) {
                   <>
                     <button
                       onClick={handleReset}
-                      className="flex-1 py-3 border-2 border-gray-800 text-gray-800 hover:bg-gray-100 transition-all duration-200 rounded-lg font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+                      className="flex-1 py-3 border-2 border-ods-brown-dark text-ods-brown-dark hover:bg-ods-beige transition-all duration-200 rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
                     >
                       <Upload size={18} /> Proteger otra foto
                     </button>
                     <button
                       onClick={handleReset}
-                      className="flex-1 py-3 border-2 border-red-500 text-red-500 hover:bg-red-50 transition-all duration-200 rounded-lg font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+                      className="flex-1 py-3 border-2 border-red-500 text-red-500 hover:bg-red-50 transition-all duration-200 rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
                     >
                       <Trash2 size={18} /> Borrar foto
                     </button>
@@ -220,7 +235,7 @@ export default function PhotoFilter({ onBack }) {
                     <button
                       onClick={handleProcessImage}
                       disabled={loading}
-                      className="flex-[2] py-3.5 bg-gray-800 text-white hover:bg-gray-900 transition-all duration-200 rounded-lg font-bold flex items-center justify-center gap-2 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-[0.98]"
+                      className="flex-[2] py-3.5 bg-ods-red text-white hover:bg-ods-red-vibrant transition-all duration-200 rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer disabled:bg-ods-brown-medium/40 disabled:cursor-not-allowed active:scale-[0.98] shadow-md hover:shadow-lg"
                     >
                       {loading ? (
                         <>
@@ -234,7 +249,7 @@ export default function PhotoFilter({ onBack }) {
                     <button
                       onClick={handleReset}
                       disabled={loading}
-                      className="flex-1 py-3.5 border-2 border-red-500 text-red-500 hover:bg-red-50 transition-all duration-200 rounded-lg font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+                      className="flex-1 py-3.5 border-2 border-red-500 text-red-500 hover:bg-red-50 transition-all duration-200 rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
                     >
                       <Trash2 size={18} /> Quitar foto
                     </button>
@@ -246,20 +261,20 @@ export default function PhotoFilter({ onBack }) {
 
           {/* Columna Derecha: Imagen Protegida e Inmunizada */}
           <div className="flex flex-col">
-            <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">🛡️ Imagen protegida</p>
-            <div className="border-2 border-gray-200 rounded-xl h-72 flex flex-col items-center justify-center bg-gray-50 overflow-hidden relative">
+            <p className="text-sm font-bold text-ods-brown-dark mb-2 flex items-center gap-2 select-none">🛡️ Imagen protegida</p>
+            <div className="border-2 border-ods-brown-light/20 rounded-xl h-72 flex flex-col items-center justify-center bg-ods-beige/25 overflow-hidden relative">
               {processedUrl ? (
                 <>
                   <img src={processedUrl} alt="Protegida" className="w-full h-full object-contain" />
-                  <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                  <div className="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                     <ShieldCheck size={10} /> PROTEGIDA
                   </div>
                 </>
               ) : (
-                <div className="text-center p-6 text-gray-400">
+                <div className="text-center p-6 text-ods-brown-medium/50">
                   <ImageIcon size={40} className="mx-auto mb-4 opacity-50" />
-                  <p className="text-sm font-semibold">Aquí aparecerá tu foto protegida</p>
-                  <p className="text-xs mt-1 text-gray-400">Visualmente idéntica, pero con protección invisible</p>
+                  <p className="text-sm font-bold text-ods-brown-dark">Aquí aparecerá tu foto protegida</p>
+                  <p className="text-xs mt-1">Visualmente idéntica, pero con perturbaciones invisibles</p>
                 </div>
               )}
             </div>
@@ -269,13 +284,13 @@ export default function PhotoFilter({ onBack }) {
               <div className="mt-4 flex gap-3">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-3 rounded-xl font-bold text-white bg-ods-red hover:bg-ods-red-vibrant transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer shadow-md"
                 >
                   <Download size={18} /> Descargar
                 </button>
                 <button
                   onClick={handleCopy}
-                  className="flex-1 py-3 rounded-lg font-bold border-2 border-gray-800 text-gray-800 hover:bg-gray-100 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-3 rounded-xl font-bold border-2 border-ods-brown-dark text-ods-brown-dark hover:bg-ods-beige transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {copied ? <><CheckCircle size={18} className="text-green-600" /> Copiada</> : <><Copy size={18} /> Copiar</>}
                 </button>
@@ -287,11 +302,11 @@ export default function PhotoFilter({ onBack }) {
 
         {/* Notificación Informativa de Inmunización Exitosa */}
         {filterApplied && (
-          <div className="mt-8 bg-green-50 border-l-4 border-green-500 p-5 rounded-lg flex items-start gap-4 animate-fadeIn">
-            <ShieldCheck className="text-green-600 flex-shrink-0 mt-0.5" size={24} />
+          <div className="mt-8 bg-emerald-50/50 border-l-4 border-emerald-600 p-5 rounded-r-xl flex items-start gap-4 animate-fadeIn border border-emerald-600/20">
+            <ShieldCheck className="text-emerald-600 flex-shrink-0 mt-0.5" size={24} />
             <div>
-              <h3 className="text-green-800 font-bold text-lg">Protección aplicada exitosamente</h3>
-              <p className="text-green-700 mt-1 text-sm leading-relaxed">
+              <h3 className="text-emerald-800 font-extrabold text-lg">Protección aplicada exitosamente</h3>
+              <p className="text-emerald-700 mt-1 text-sm leading-relaxed">
                 Tu imagen ahora cuenta con <strong>perturbación adversarial cromática invisible</strong> y una
                 <strong>firma esteganográfica cifrada</strong>. La variación cromática máxima por píxel se ha restringido a un rango
                 matemático extremadamente bajo, haciendo que sea <strong>totalmente invisible al ojo humano</strong>.
@@ -300,7 +315,7 @@ export default function PhotoFilter({ onBack }) {
               </p>
               <button
                 onClick={handleReset}
-                className="mt-3 text-xs font-bold text-green-700 hover:text-green-900 transition-colors flex items-center gap-1 cursor-pointer"
+                className="mt-3 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition-colors flex items-center gap-1 cursor-pointer"
               >
                 ¿Quieres proteger otra foto? Haz clic aquí para comenzar de nuevo.
               </button>

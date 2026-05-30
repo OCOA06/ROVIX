@@ -127,163 +127,173 @@ const INFO_DETAILS = {
 }
 
 // ============================================================================
-// COMPONENTE EXPORTADO PRINCIPAL
+// COMPONENTE EXPORTADO PRINCIPAL (SIDEBAR CON DISEÑO ODS 5)
 // ============================================================================
 export default function Sidebar({ activeView, setActiveView }) {
   // Estado local para almacenar qué modal informativo está activo en pantalla (null por defecto)
   const [activeModal, setActiveModal] = useState(null)
 
+  /* 
+     Justificación del uso de colores en Sidebar:
+     - Fondo bg-ods-beige y border-ods-brown-light/35: Brindan claridad, transparencia y descanso visual (base beige/blanco).
+     - Logotipo Rovix_logo.png integrado: Reemplaza iconos genéricos, aportando profesionalismo y consolidando la marca.
+     - Hover en tarjetas (hover:border-ods-red-vibrant): El rojo (ODS 5) invita a la acción y destaca el portal.
+     - Títulos de tarjeta en hover (group-hover:text-ods-orange): El naranja simboliza cambio positivo y esperanza.
+  */
+
   return (
-    // Contenedor de la barra lateral ajustado a la pantalla, con scroll vertical interno independiente para evitar desplazamientos del layout global
-    <div className="w-64 bg-gray-100 border-r border-gray-300 flex flex-col h-full overflow-hidden">
+    // Contenedor de la barra lateral ajustado a la pantalla, con fondo beige cálido y scroll vertical independiente
+    <div className="w-64 bg-ods-beige border-r border-ods-brown-light/35 flex flex-col h-full overflow-hidden">
       
-      {/* Botón superior fijo de Retorno a Inicio */}
+      {/* Botón superior fijo de Retorno a Inicio con Logotipo Integrado */}
       <div 
-        className="p-6 border-b border-gray-300 flex items-center gap-3 cursor-pointer flex-shrink-0 hover:bg-gray-200/50 transition-colors" 
+        className="p-6 border-b border-ods-brown-light/25 flex items-center gap-3 cursor-pointer flex-shrink-0 hover:bg-ods-brown-light/15 transition-colors" 
         onClick={() => setActiveView('home')}
       >
-        <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold">
-          <Home size={20} />
-        </div>
+        <img 
+          src="/Rovix_logo.png" 
+          alt="ROVIX" 
+          className="w-10 h-10 object-contain rounded-xl bg-white p-1 border border-ods-brown-light/20 shadow-sm"
+        />
         <div>
-          <h2 className="font-bold text-gray-800 text-lg">Inicio</h2>
-          <p className="text-xs text-gray-500">Panel Principal</p>
+          <h2 className="font-extrabold text-ods-brown-dark text-lg tracking-tight">ROVIX</h2>
+          <p className="text-xs text-ods-brown-medium font-semibold">Menú Principal</p>
         </div>
       </div>
       
       {/* Panel intermedio desplazable para las tarjetas informativas */}
       <div className="p-4 flex-1 overflow-y-auto">
         <div className="flex items-center gap-2 mb-4 mt-2">
-          <AlertCircle className="text-gray-700" size={20} />
-          <h3 className="font-bold text-gray-700 uppercase tracking-wider text-sm">Lo + Nuevo</h3>
+          <AlertCircle className="text-ods-orange" size={20} />
+          <h3 className="font-extrabold text-ods-brown-medium uppercase tracking-wider text-xs">Lo + Nuevo</h3>
         </div>
         
         <div className="space-y-3">
           
           {/* SECCIÓN 1: Portales Oficiales de Apoyo Institucional */}
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 select-none">Portales de Apoyo</div>
+          <div className="text-[10px] font-extrabold text-ods-brown-medium/60 uppercase tracking-wider mb-2 select-none">Portales de Apoyo</div>
           
           {/* Tarjeta 1: INMUJERES */}
           <a
             href="https://www.gob.mx/inmujeres"
             onClick={(e) => { e.preventDefault(); setActiveModal('inmujeres'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Inst. Nacional de las Mujeres</span>
-              <span className="text-[10px] text-gray-400 font-normal">inmujeres.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">inmujeres.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Consulta el portal oficial de INMUJERES para acceder a programas de equidad, derechos digitales y erradicación de la violencia.</p>
+            <p className="text-xs text-ods-brown-medium/90">Consulta el portal oficial de INMUJERES para acceder a programas de equidad, derechos digitales y erradicación de la violencia.</p>
           </a>
           
           {/* Tarjeta 2: CONAVIM */}
           <a
             href="https://www.gob.mx/conavim"
             onClick={(e) => { e.preventDefault(); setActiveModal('conavim'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Portal de la CONAVIM</span>
-              <span className="text-[10px] text-gray-400 font-normal">conavim.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">conavim.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Revisa las campañas nacionales, recursos y mecanismos de prevención contra la violencia digital y de género.</p>
+            <p className="text-xs text-ods-brown-medium/90">Revisa las campañas nacionales, recursos y mecanismos de prevención contra la violencia digital y de género.</p>
           </a>
           
           {/* Tarjeta 3: SSPC */}
           <a
             href="https://www.gob.mx/sspc"
             onClick={(e) => { e.preventDefault(); setActiveModal('sspc'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Sec. de Seguridad (SSPC)</span>
-              <span className="text-[10px] text-gray-400 font-normal">sspc.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">sspc.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Explora el sitio de la SSPC para informarte sobre ciberseguridad nacional y canales de reporte ciudadano.</p>
+            <p className="text-xs text-ods-brown-medium/90">Explora el sitio de la SSPC para informarte sobre ciberseguridad nacional y canales de reporte ciudadano.</p>
           </a>
- 
+  
           {/* Tarjeta 4: Guardia Nacional */}
           <a
             href="https://www.gob.mx/guardianacional"
             onClick={(e) => { e.preventDefault(); setActiveModal('guardianacional'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Guardia Nacional de México</span>
-              <span className="text-[10px] text-gray-400 font-normal">gob.mx/gn ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">gob.mx/gn ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Conoce las recomendaciones de la Guardia Nacional para prevenir ciberdelitos y proteger a la familia en internet.</p>
+            <p className="text-xs text-ods-brown-medium/90">Conoce las recomendaciones de la Guardia Nacional para prevenir ciberdelitos y proteger a la familia en internet.</p>
           </a>
- 
+  
           {/* SECCIÓN 2: Noticias e Informes Educativos */}
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-3 pb-1 select-none border-t border-gray-200">Noticias y Recursos</div>
- 
+          <div className="text-[10px] font-extrabold text-ods-brown-medium/60 uppercase tracking-wider pt-3 pb-1 select-none border-t border-ods-brown-light/25">Noticias y Recursos</div>
+  
           {/* Tarjeta 5: Salud Mental */}
           <a
             href="https://www.gob.mx/salud"
             onClick={(e) => { e.preventDefault(); setActiveModal('salud_mental'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Ciberacoso y Salud Mental</span>
-              <span className="text-[10px] text-gray-400 font-normal">salud.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">salud.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Efectos emocionales del hostigamiento cibernético persistente y pautas de autocuidado digital.</p>
+            <p className="text-xs text-ods-brown-medium/90">Efectos emocionales del hostigamiento cibernético persistente y pautas de autocuidado digital.</p>
           </a>
- 
+  
           {/* Tarjeta 6: Homologación Penal */}
           <a
             href="https://www.gob.mx/segob"
             onClick={(e) => { e.preventDefault(); setActiveModal('leyes_mexico'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Avances Legales en México</span>
-              <span className="text-[10px] text-gray-400 font-normal">segob.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">segob.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">La violencia digital ha sido homologada penalmente en los 32 estados de la República Mexicana.</p>
+            <p className="text-xs text-ods-brown-medium/90">La violencia digital ha sido homologada penalmente en los 32 estados de la República Mexicana.</p>
           </a>
- 
+  
           {/* Tarjeta 7: Deepfakes e IA */}
           <a
             href="https://www.gob.mx/sspc"
             onClick={(e) => { e.preventDefault(); setActiveModal('ciber_ia'); }}
-            className="block bg-white p-3 rounded shadow-sm border border-gray-200 hover:shadow-md transition-all hover:border-gray-400 group cursor-pointer"
+            className="block bg-white p-3 rounded shadow-sm border border-ods-brown-light/30 hover:shadow-md transition-all hover:border-ods-red-vibrant group cursor-pointer"
           >
-            <h4 className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-blue-600 transition-colors flex items-center justify-between">
+            <h4 className="font-bold text-ods-brown-dark text-sm mb-1 group-hover:text-ods-orange transition-colors flex items-center justify-between">
               <span>Riesgos de IA y Deepfakes</span>
-              <span className="text-[10px] text-gray-400 font-normal">sspc.gob.mx ↗</span>
+              <span className="text-[10px] text-ods-brown-medium font-normal">sspc.gob.mx ↗</span>
             </h4>
-            <p className="text-xs text-gray-600">Uso no consentido de software generativo de Inteligencia Artificial para alterar y simular imágenes íntimas.</p>
+            <p className="text-xs text-ods-brown-medium/90">Uso no consentido de software generativo de Inteligencia Artificial para alterar y simular imágenes íntimas.</p>
           </a>
         </div>
       </div>
- 
+  
       {/* ============================================================================
-          MODAL INTERACTIVO FLOTANTE (INFO MODAL)
+          MODAL INTERACTIVO FLOTANTE CON COLORES PREMIUM
           ============================================================================ */}
       {activeModal && (() => {
         const info = INFO_DETAILS[activeModal];
         return (
-          // Contenedor principal con fondo oscuro traslúcido y desenfoque (backdrop-blur)
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          // Contenedor principal con fondo oscuro traslúcido y desenfoque
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-ods-brown-dark/70 backdrop-blur-sm">
             
-            {/* Cuerpo del Modal con restricciones de altura para soportar pantallas pequeñas mediante barra de desplazamiento interna */}
-            <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-200 flex flex-col max-h-[90vh]">
+            {/* Cuerpo del Modal con restricciones de altura e interfaz cálida */}
+            <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-ods-brown-light/25 flex flex-col max-h-[90vh] animate-fadeIn">
               
-              {/* Encabezado del Modal con degradado elegante */}
-              <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-5 flex items-center justify-between text-white flex-shrink-0">
+              {/* Encabezado del Modal con degradado de estabilidad y empatía */}
+              <div className="bg-gradient-to-r from-ods-brown-dark to-ods-brown-medium px-6 py-5 flex items-center justify-between text-white flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{info.emoji}</span>
                   <div>
-                    <h3 className="font-bold text-[10px] text-gray-400 uppercase tracking-wide">{info.agency}</h3>
+                    <h3 className="font-extrabold text-[10px] text-ods-brown-light uppercase tracking-widest">{info.agency}</h3>
                     <h2 className="font-extrabold text-base leading-tight mt-0.5">{info.title}</h2>
                   </div>
                 </div>
                 {/* Botón de cierre superior */}
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="text-gray-300 hover:text-white transition-colors p-1 bg-white/10 rounded-lg cursor-pointer"
+                  className="text-ods-beige hover:text-white transition-colors p-1 bg-white/10 rounded-lg cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -292,19 +302,19 @@ export default function Sidebar({ activeView, setActiveView }) {
               {/* Contenido Desplazable del Modal */}
               <div className="p-6 overflow-y-auto space-y-4">
                 <div>
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">{info.subtitle}</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">{info.content}</p>
+                  <h4 className="font-extrabold text-ods-brown-dark text-sm mb-1">{info.subtitle}</h4>
+                  <p className="text-xs text-ods-brown-medium/95 leading-relaxed">{info.content}</p>
                 </div>
                 
-                {/* Panel de Pautas Clave de Acción */}
-                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
-                  <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <span>💡</span> Pautas Clave de Acción:
+                {/* Panel de Pautas Clave de Acción con tonos de estabilidad y cambio */}
+                <div className="bg-ods-beige/40 border border-ods-brown-light/20 rounded-xl p-4">
+                  <h4 className="font-extrabold text-ods-brown-dark text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <span className="text-ods-orange">💡</span> Pautas Clave de Acción:
                   </h4>
                   <ul className="space-y-2">
                     {info.keyPoints.map((point, index) => (
-                      <li key={index} className="text-xs text-gray-600 flex items-start gap-2">
-                        <span className="text-emerald-500 font-bold select-none mt-0.5">•</span>
+                      <li key={index} className="text-xs text-ods-brown-medium/95 flex items-start gap-2">
+                        <span className="text-ods-orange font-bold select-none mt-0.5">•</span>
                         <span>{point}</span>
                       </li>
                     ))}
@@ -312,11 +322,11 @@ export default function Sidebar({ activeView, setActiveView }) {
                 </div>
               </div>
               
-              {/* Pie de página con botones de cierre y redirección externa segura */}
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3 flex-shrink-0">
+              {/* Pie de página con botones de cierre y redirección externa en Rojo ODS 5 */}
+              <div className="px-6 py-4 bg-ods-beige/70 border-t border-ods-brown-light/20 flex items-center justify-end gap-3 flex-shrink-0">
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-ods-brown-light rounded-xl text-xs font-bold text-ods-brown-dark hover:bg-ods-beige transition-colors cursor-pointer"
                 >
                   Cerrar
                 </button>
@@ -324,7 +334,7 @@ export default function Sidebar({ activeView, setActiveView }) {
                   href={info.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-gray-800 text-white rounded-xl text-xs font-bold hover:bg-gray-900 transition-colors flex items-center gap-1 cursor-pointer"
+                  className="px-4 py-2 bg-ods-red text-white rounded-xl text-xs font-bold hover:bg-ods-red-vibrant transition-all flex items-center gap-1 cursor-pointer shadow-md hover:shadow-lg active:scale-95"
                 >
                   <span>Visitar Sitio Oficial</span>
                   <span>↗</span>

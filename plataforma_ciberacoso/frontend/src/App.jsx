@@ -17,8 +17,8 @@ function App() {
   const [activeView, setActiveView] = useState('home')
 
   return (
-    // Contenedor principal ajustado al alto de la pantalla (100vh) para evitar barras de desplazamiento generales
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    // Contenedor principal ajustado al alto de la pantalla (100vh) con la paleta de descanso beige
+    <div className="flex flex-col h-screen bg-ods-beige-light overflow-hidden">
       
       {/* Sección intermedia que agrupa la barra lateral y el contenido de la vista activa */}
       <div className="flex flex-1 overflow-hidden">
@@ -27,9 +27,12 @@ function App() {
         
         {/* Panel derecho del contenido */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Cabecera superior fija */}
-          <header className="bg-white border-b border-gray-200 h-16 flex items-center px-8 shadow-sm flex-shrink-0">
-            <h1 className="text-xl font-bold text-gray-700">Plataforma de Prevención</h1>
+          {/* Cabecera superior fija con estilo ODS 5 y logo oficial */}
+          <header className="bg-white border-b border-ods-brown-light/35 h-16 flex items-center px-8 shadow-sm flex-shrink-0 gap-3">
+            <img src="/Rovix_logo.png" alt="ROVIX Logo" className="w-8 h-8 object-contain" />
+            <h1 className="text-xl font-extrabold text-ods-brown-dark tracking-tight">
+              ROVIX <span className="text-ods-red font-semibold">|</span> <span className="text-xs uppercase font-bold tracking-wider text-ods-brown-medium bg-ods-beige px-2.5 py-1 rounded-md border border-ods-brown-light/20">Plataforma de Prevención</span>
+            </h1>
           </header>
           
           {/* Área dinámica de despliegue de componentes */}
@@ -44,11 +47,11 @@ function App() {
       
       {/* Pie de página (Banner largo institucional). Se renderiza únicamente en la pantalla de inicio */}
       {activeView === 'home' && (
-        <footer className="bg-gray-100 border-t border-gray-200 py-4 px-8 text-xs text-center text-gray-400 font-semibold flex items-center justify-center gap-2 select-none shadow-inner flex-shrink-0">
-          <Shield size={14} className="text-gray-400 stroke-[2.5]" />
-          <span>Rovix &copy; 2026</span>
-          <span className="mx-2 text-gray-300">|</span>
-          <span className="text-gray-400 font-normal">Plataforma Educativa para la Prevención del Ciberacoso y la Violencia Digital</span>
+        <footer className="bg-ods-beige border-t border-ods-brown-light/30 py-4 px-8 text-xs text-center text-ods-brown-medium font-semibold flex items-center justify-center gap-2 select-none shadow-inner flex-shrink-0">
+          <Shield size={14} className="text-ods-orange stroke-[2.5]" />
+          <span>ROVIX &copy; 2026</span>
+          <span className="mx-2 text-ods-brown-light/40">|</span>
+          <span className="text-ods-brown-medium font-normal">Plataforma Educativa para la Prevención del Ciberacoso y la Violencia Digital — Alineada con el ODS 5</span>
         </footer>
       )}
     </div>

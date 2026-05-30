@@ -1,7 +1,18 @@
-/* =====================================================
+/* ============================================================================
    ROVIX Guard - popup.css
-   Paleta: GRISES únicamente (color final pendiente)
-===================================================== */
+   Paleta: ODS 5 (Igualdad de Género) y ONU Campaña Naranja
+   
+   🔴 Rojo ODS 5 (#e5243b / #ff3131): Acción principal, toggle activo y alertas.
+   🟠 Naranja (#ef7d00): Advertencias, badges de novedades.
+   🟤 Tonos Tierra (#3e2a1f / #8b7355 / #d2b48c): Estabilidad, base neutral.
+   ⚪ Beige y Blanco (#faf6f0 / #ffffff): Claridad y descanso visual.
+   
+   Justificación del uso de colores:
+   El fondo beige (#faf6f0) y detalles crema proporcionan claridad y limpieza visual 
+   para una temática tan seria. La cabecera en marrón profundo (#3e2a1f) da estabilidad 
+   y contraste, mientras que el Rojo ODS 5 (#ff3131) en el switch y botones resalta 
+   el estado activo y el compromiso con la causa social.
+============================================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -14,8 +25,8 @@
 body {
   width: 340px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #111111;
-  color: #d4d4d4;
+  background: #faf6f0; /* Beige de descanso visual */
+  color: #3e2a1f;      /* Marrón oscuro para lectura estable */
   font-size: 13px;
   overflow-x: hidden;
 }
@@ -28,14 +39,15 @@ body {
 .header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 16px 12px;
-  background: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
+  gap: 12px;
+  padding: 16px 16px 14px;
+  background: #3e2a1f; /* Marrón profundo */
+  border-bottom: 2px solid #d2b48c; /* Borde color tierra claro */
 }
 
 .header-icon {
-  font-size: 26px;
+  font-size: 24px;
+  line-height: 1;
 }
 
 .header-text {
@@ -44,24 +56,26 @@ body {
 
 .header-title {
   font-size: 15px;
-  font-weight: 700;
-  color: #eeeeee;
-  letter-spacing: 0.3px;
+  font-weight: 800;
+  color: #faf6f0; /* Letras claras en cabecera */
+  letter-spacing: 0.5px;
 }
 
 .header-subtitle {
   font-size: 10px;
-  color: #666;
-  margin-top: 1px;
-  font-weight: 400;
+  color: #d2b48c;
+  margin-top: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Toggle switch */
 .toggle {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 22px;
+  width: 44px;
+  height: 24px;
   cursor: pointer;
 }
 
@@ -74,77 +88,78 @@ body {
 .slider {
   position: absolute;
   inset: 0;
-  background: #2e2e2e;
+  background: #e6dfd5; /* Base grisácea cálida */
   border-radius: 99px;
   transition: 0.3s;
-  border: 1px solid #3a3a3a;
+  border: 1px solid #d2b48c;
 }
 
 .slider::before {
   content: "";
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   left: 2px;
   top: 2px;
-  background: #666;
+  background: #8b7355; /* Tierra medio */
   border-radius: 50%;
   transition: 0.3s;
 }
 
 .toggle input:checked + .slider {
-  background: #555;
-  border-color: #777;
+  background: #ff3131; /* Rojo ODS 5 vibrante de activación */
+  border-color: #e5243b;
 }
 
 .toggle input:checked + .slider::before {
-  transform: translateX(18px);
-  background: #ddd;
+  transform: translateX(20px);
+  background: #ffffff;
 }
 
 /* Status bar */
 .status-bar {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 16px;
-  background: #161616;
-  border-bottom: 1px solid #222;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5efe6; /* Crema suave */
+  border-bottom: 1px solid #e6dfd5;
   font-size: 11px;
-  color: #666;
+  color: #8b7355;
+  font-weight: 600;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #333;
+  background: #8b7355;
   flex-shrink: 0;
   transition: 0.3s;
 }
 
 .status-dot.active {
-  background: #aaa;
-  animation: pulse-dot 2s ease-in-out infinite;
+  background: #ff3131; /* Rojo vibrante */
+  animation: pulse-dot 2.5s ease-in-out infinite;
 }
 
 .status-dot.inactive {
-  background: #444;
+  background: #c5b4a6;
 }
 
 .status-dot.warning {
-  background: #888;
+  background: #ef7d00; /* Naranja campaña */
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(180,180,180,0.4); }
-  50% { opacity: 0.6; box-shadow: 0 0 9px rgba(180,180,180,0.7); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(255,49,49,0.5); }
+  50% { opacity: 0.6; box-shadow: 0 0 10px rgba(255,49,49,0.8); }
 }
 
 /* Sections */
 .section {
-  padding: 12px 16px;
-  border-bottom: 1px solid #222;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e6dfd5;
 }
 
 .section:last-of-type {
@@ -165,7 +180,7 @@ body {
 .section-title {
   font-size: 11px;
   font-weight: 700;
-  color: #666;
+  color: #8b7355; /* Tono tierra medio */
   text-transform: uppercase;
   letter-spacing: 0.6px;
   flex: 1;
@@ -173,14 +188,14 @@ body {
 
 .link-btn {
   font-size: 10px;
-  color: #999;
+  color: #e5243b; /* Rojo ODS 5 */
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   transition: color 0.2s;
 }
 
 .link-btn:hover {
-  color: #ccc;
+  color: #ff3131;
 }
 
 /* API Key input */
@@ -191,11 +206,11 @@ body {
 
 .api-input {
   width: 100%;
-  padding: 9px 36px 9px 12px;
-  background: #1e1e1e;
-  border: 1px solid #333;
+  padding: 10px 36px 10px 12px;
+  background: #ffffff;
+  border: 1px solid #d2b48c;
   border-radius: 10px;
-  color: #ddd;
+  color: #3e2a1f;
   font-size: 12px;
   font-family: 'Inter', monospace;
   outline: none;
@@ -203,12 +218,12 @@ body {
 }
 
 .api-input:focus {
-  border-color: #666;
-  box-shadow: 0 0 0 3px rgba(150,150,150,0.1);
+  border-color: #ef7d00; /* Naranja en foco */
+  box-shadow: 0 0 0 3px rgba(239, 125, 0, 0.15);
 }
 
 .api-input::placeholder {
-  color: #444;
+  color: #c5b4a6;
 }
 
 .toggle-visibility {
@@ -220,34 +235,35 @@ body {
   border: none;
   cursor: pointer;
   font-size: 14px;
-  opacity: 0.4;
+  opacity: 0.5;
   transition: opacity 0.2s;
   padding: 2px;
 }
 
 .toggle-visibility:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .save-btn {
   width: 100%;
-  padding: 9px;
-  background: #383838;
-  color: #e0e0e0;
-  border: 1px solid #555;
+  padding: 10px;
+  background: #e5243b; /* Rojo ODS 5 */
+  color: #ffffff;
+  border: 1px solid #e5243b;
   border-radius: 10px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
   margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(229, 36, 59, 0.2);
 }
 
 .save-btn:hover {
-  background: #484848;
-  border-color: #888;
-  color: #fff;
+  background: #ff3131;
+  border-color: #ff3131;
+  box-shadow: 0 4px 8px rgba(255, 49, 49, 0.35);
 }
 
 .save-btn:active {
@@ -257,42 +273,46 @@ body {
 .save-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .hint {
-  font-size: 10px;
-  color: #555;
+  font-size: 11px;
+  color: #8b7355;
   line-height: 1.5;
   margin-bottom: 10px;
 }
 
 .hint strong {
-  color: #888;
+  color: #3e2a1f;
 }
 
 .feature-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  background: #f5efe6;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e6dfd5;
 }
 
 .feature-item {
-  font-size: 10px;
-  color: #666;
-  padding: 3px 0;
+  font-size: 11px;
+  color: #6e5544; /* Tono tierra medio suave */
+  font-weight: 600;
   line-height: 1.4;
 }
-
-
 
 /* Footer */
 .footer {
   display: flex;
   justify-content: space-between;
-  padding: 8px 16px 4px;
+  padding: 10px 16px 4px;
   font-size: 10px;
-  color: #444;
-  border-top: 1px solid #222;
+  color: #8b7355;
+  border-top: 1px solid #e6dfd5;
+  font-weight: 500;
 }
 
 /* Toast */
@@ -301,18 +321,19 @@ body {
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%) translateY(10px);
-  padding: 7px 14px;
-  background: #1e1e1e;
-  border: 1px solid #444;
-  color: #ccc;
+  padding: 8px 16px;
+  background: #3e2a1f;
+  border: 1px solid #8b7355;
+  color: #faf6f0;
   border-radius: 8px;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   opacity: 0;
   transition: all 0.3s;
   pointer-events: none;
   white-space: nowrap;
   z-index: 9999;
+  box-shadow: 0 4px 12px rgba(62, 42, 31, 0.25);
 }
 
 .popup-toast.show {

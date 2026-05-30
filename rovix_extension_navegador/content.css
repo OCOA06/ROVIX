@@ -1,7 +1,20 @@
-/* =====================================================
+/* ============================================================================
    ROVIX Guard - content.css
-   Paleta: GRISES únicamente (color final pendiente)
-===================================================== */
+   Paleta: ODS 5 (Igualdad de Género) y ONU Campaña Naranja
+   
+   🔴 Rojo ODS 5 (#e5243b / #ff3131): Acciones y alertas críticas.
+   🟠 Naranja (#ef7d00): Realces e intenciones de riesgo medio.
+   🟤 Tonos Tierra (#3e2a1f / #8b7355 / #d2b48c): Estabilidad, base neutral.
+   ⚪ Beige y Blanco (#faf6f0 / #ffffff): Claridad, transparencia y descanso visual.
+   
+   Justificación del uso de colores:
+   El panel inyectado en páginas web (rg-panel) utiliza un fondo beige translúcido 
+   con desenfoque (#faf6f0) para encajar armoniosamente en cualquier red social 
+   sin cansar la vista. La cabecera y tipografía en marrón oscuro (#3e2a1f) aportan 
+   estabilidad y seriedad. Las barras de riesgo y botones usan el Rojo ODS 5 (#ff3131) 
+   y Naranja (#ef7d00) para enfocar inmediatamente la atención sobre los estados 
+   de alerta de ciberacoso.
+============================================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -14,14 +27,14 @@
   font-size: 13px;
   line-height: 1.4;
 
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(250, 246, 240, 0.95); /* Beige cálido translúcido */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(139, 115, 85, 0.25); /* Borde de tono tierra */
   border-radius: 14px;
   box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 24px 64px rgba(62, 42, 31, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
   overflow: hidden;
   opacity: 0;
@@ -46,8 +59,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px 11px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+  background: rgba(62, 42, 31, 0.05); /* Tinte tierra cálido */
 }
 
 .rg-logo {
@@ -63,19 +76,19 @@
 
 .rg-title {
   font-size: 12px;
-  font-weight: 700;
-  color: #ededed;
+  font-weight: 800;
+  color: #3e2a1f; /* Marrón oscuro */
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
 .rg-close {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #999;
+  background: rgba(62, 42, 31, 0.06);
+  border: 1px solid rgba(62, 42, 31, 0.15);
+  color: #8b7355;
   cursor: pointer;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 4px 10px;
   border-radius: 6px;
   transition: all 0.15s ease;
@@ -85,9 +98,9 @@
 }
 
 .rg-close:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  color: #ff3131; /* Rojo vibrante */
+  background: rgba(229, 36, 59, 0.08);
+  border-color: rgba(229, 36, 59, 0.25);
 }
 
 /* ---- Typing indicator ---- */
@@ -99,9 +112,9 @@
 }
 
 .rg-typing-label {
-  color: #999;
+  color: #8b7355;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .rg-typing-dots {
@@ -115,7 +128,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #666;
+  background: #8b7355;
   animation: rg-bounce 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
@@ -123,8 +136,8 @@
 .rg-typing-dots span:nth-child(3) { animation-delay: 0.36s; }
 
 @keyframes rg-bounce {
-  0%, 80%, 100% { transform: translateY(0); background: #666; }
-  40% { transform: translateY(-4px); background: #bbb; }
+  0%, 80%, 100% { transform: translateY(0); background: #8b7355; }
+  40% { transform: translateY(-4px); background: #ef7d00; }
 }
 
 /* ---- Loading ---- */
@@ -133,16 +146,16 @@
   align-items: center;
   gap: 10px;
   padding: 15px 16px;
-  color: #999;
+  color: #8b7355;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .rg-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #ddd;
+  border: 2px solid rgba(139, 115, 85, 0.2);
+  border-top-color: #ff3131; /* Rojo ODS 5 */
   border-radius: 50%;
   animation: rg-spin 0.65s linear infinite;
   flex-shrink: 0;
@@ -155,7 +168,7 @@
 /* ---- Risk bar ---- */
 .rg-risk {
   padding: 13px 16px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(139, 115, 85, 0.1);
 }
 
 .rg-risk-top {
@@ -167,19 +180,19 @@
 
 .rg-risk-label {
   font-size: 12px;
-  font-weight: 600;
-  color: #d1d1d1;
+  font-weight: 700;
+  color: #3e2a1f;
 }
 
 .rg-risk-score {
   font-size: 11px;
   font-weight: 700;
-  color: #777;
+  color: #8b7355;
 }
 
 .rg-risk-bar-wrap {
   height: 4px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(62, 42, 31, 0.08);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -187,14 +200,14 @@
 .rg-risk-bar {
   height: 100%;
   border-radius: 99px;
-  background: #777;
+  background: #8b7355;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Risk level bar shading */
-.rg-risk-none .rg-risk-bar { background: #3a3a3a; }
+.rg-risk-none .rg-risk-bar { background: #c5b4a6; }
 .rg-risk-critical .rg-risk-bar {
-  background: #d4d4d4;
+  background: #ff3131; /* Rojo ODS 5 vibrante */
   animation: rg-pulse-bar 1.4s ease-in-out infinite;
 }
 
@@ -205,8 +218,9 @@
 
 /* Risk level label color */
 .rg-risk-critical .rg-risk-label {
-  color: #e0e0e0;
+  color: #e5243b;
   font-size: 13px;
+  font-weight: 800;
 }
 
 /* ---- Badges ---- */
@@ -215,18 +229,18 @@
   flex-wrap: wrap;
   gap: 5px;
   padding: 8px 14px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.1);
 }
 
 .rg-badge {
   display: inline-block;
   padding: 2px 9px;
-  background: #2e2e2e;
-  border: 1px solid #444;
-  color: #aaaaaa;
+  background: #e6dfd5;
+  border: 1px solid #d2b48c;
+  color: #6e5544;
   border-radius: 99px;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -234,7 +248,7 @@
 /* ---- Sections ---- */
 .rg-section {
   padding: 10px 14px;
-  border-bottom: 1px solid #252525;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.1);
 }
 
 .rg-section:last-child {
@@ -244,14 +258,14 @@
 .rg-section-title {
   font-size: 10px;
   font-weight: 700;
-  color: #555;
+  color: #8b7355;
   text-transform: uppercase;
   letter-spacing: 0.7px;
   margin-bottom: 6px;
 }
 
 .rg-explicacion {
-  color: #aaa;
+  color: #6e5544;
   font-size: 12px;
   line-height: 1.55;
 }
@@ -265,9 +279,9 @@
 
 .rg-fragment {
   padding: 4px 8px;
-  background: #252525;
-  border-left: 2px solid #777;
-  color: #bbb;
+  background: #f5efe6;
+  border-left: 2.5px solid #ef7d00; /* Naranja campaña contra violencia */
+  color: #6e5544;
   border-radius: 0 5px 5px 0;
   font-size: 11px;
   font-style: italic;
@@ -275,16 +289,16 @@
 
 /* ---- Reformulado ---- */
 .rg-section-reformular {
-  background: #1f1f1f;
+  background: rgba(250, 246, 240, 0.8);
 }
 
 .rg-reformulado {
-  color: #bbb;
+  color: #3e2a1f;
   font-size: 12px;
   line-height: 1.55;
   padding: 9px 11px;
-  background: #272727;
-  border: 1px solid #3a3a3a;
+  background: #ffffff;
+  border: 1px solid #d2b48c;
   border-radius: 8px;
   margin-bottom: 9px;
   font-style: italic;
@@ -293,43 +307,43 @@
 .rg-btn-apply {
   width: 100%;
   padding: 9px 14px;
-  background: #383838;
-  color: #e0e0e0;
-  border: 1px solid #555;
+  background: #e5243b; /* Rojo ODS 5 */
+  color: #ffffff;
+  border: 1px solid #e5243b;
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.18s;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(229, 36, 59, 0.15);
 }
 
 .rg-btn-apply:hover {
-  background: #484848;
-  border-color: #888;
-  color: #fff;
+  background: #ff3131;
+  border-color: #ff3131;
+  box-shadow: 0 4px 8px rgba(255, 49, 49, 0.3);
 }
 
 .rg-btn-apply:active {
-  background: #303030;
   transform: scale(0.98);
 }
 
 /* ---- Consejo ---- */
 .rg-consejo {
   padding: 10px 14px;
-  color: #888;
+  color: #8b7355;
   font-size: 11px;
   line-height: 1.45;
-  border-top: 1px solid #252525;
+  border-top: 1px solid rgba(139, 115, 85, 0.1);
   font-style: italic;
 }
 
 /* ---- Error ---- */
 .rg-error {
   padding: 13px 14px;
-  color: #aaaaaa;
+  color: #6e5544;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -341,14 +355,14 @@
   right: 22px;
   z-index: 2147483647;
   padding: 10px 16px;
-  background: #222;
-  border: 1px solid #444;
-  color: #ddd;
+  background: #3e2a1f;
+  border: 1px solid #8b7355;
+  color: #faf6f0;
   border-radius: 10px;
   font-size: 13px;
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(62, 42, 31, 0.25);
   opacity: 0;
   transform: translateY(8px);
   transition: all 0.28s ease;
