@@ -27,21 +27,21 @@
 @import "tailwindcss";
 
 @theme {
-  /* Paleta de Colores ODS 5 e Identidad ROVIX */
-  --color-ods-red: #e5243b;          /* Rojo ODS 5 Oficial */
-  --color-ods-red-vibrant: #ff3131;  /* Rojo del nuevo logotipo oficial */
-  --color-ods-orange: #ef7d00;       /* Naranja Campaña de Erradicación */
-  --color-ods-brown-dark: #3e2a1f;   /* Marrón profundo (base seria) */
-  --color-ods-brown-medium: #8b7355; /* Marrón medio para detalles */
-  --color-ods-brown-light: #d2b48c;  /* Tono arena para bordes y tarjetas */
-  --color-ods-beige: #faf6f0;        /* Beige cálido para fondos de descanso */
-  --color-ods-beige-light: #fdfbf9;  /* Beige extra claro */
+  /* Paleta de Colores Oficiales de la Maquetación de Canva (ROVIX) */
+  --color-ods-red: #ec422b;          /* Rojo Oficial Canva */
+  --color-ods-red-vibrant: #ec422b;  /* Rojo Oficial Canva */
+  --color-ods-orange: #ff751f;       /* Naranja Claro / Salmón Oficial Canva */
+  --color-ods-brown-dark: #834925;   /* Café / Marrón Oficial Canva */
+  --color-ods-brown-medium: #703d1e; /* Café medio para contrastes */
+  --color-ods-brown-light: #ab8570;  /* Tono arcilla suave */
+  --color-ods-beige: #fde4d4;        /* Melocotón Claro / Crema de Canva */
+  --color-ods-beige-light: #834925;  /* Fondo general en Café */
 }
 
 @layer base {
   body {
-    background-color: var(--color-ods-beige-light);
-    color: var(--color-ods-brown-dark);
+    background-color: var(--color-ods-brown-dark);
+    color: #ffffff;
     margin: 0;
     font-family: sans-serif;
   }
