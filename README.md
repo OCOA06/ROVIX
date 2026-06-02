@@ -37,6 +37,8 @@ ROVIX/
   - **Invisibilidad Absoluta (Adversarial Perturbation)**: Aplica perturbaciones matemáticas de alta frecuencia y ruido por bloques acotados estrictamente a un rango de **±2 unidades de brillo (de 255)** en los canales de color. La protección matemática confunde por completo a los modelos de inteligencia artificial generativa (Stable Diffusion, Midjourney) inhabilitando la clonación o alteración de rostros, pero es **totalmente invisible e imperceptible al ojo humano**, garantizando que la foto conserve una fidelidad visual perfecta libre de grano o sal y pimienta.
   - **Hilvanado Esteganográfico (LSB)**: Inserta una marca de agua digital invisible en los bits menos significativos (LSB) de los colores de la imagen para firmar la procedencia de seguridad.
   - **Flujo UX de Doble Acción Dinámica**: Permite cambiar o quitar imágenes cargadas con un solo clic (`Quitar foto` con icono de papelera) y reiniciar de manera ágil el panel tras una protección exitosa (`Proteger otra foto` / `Borrar foto`) para evitar confusiones de uso.
+* **Guías Educativas de Prevención**: Acceso interactivo y descarga de recursos en PDF oficiales sobre igualdad de género (alineados al ODS 5 de la ONU) y guías paso a paso de acción inmediata sobre qué hacer ante casos de acoso y hostigamiento digital en México.
+* **Borde Circular Protector en Logotipo**: Enmarcado del logo oficial de ROVIX con una delgada línea circular blanca (`border-2 border-white`) para evitar la pérdida de contraste sobre los fondos de color rojo.
 
 ### 2. Extensión de Navegador (rovix_extension_navegador - ROVIX Guard v2.0)
 * **Escudo Activo en Navegación**: Monitorea campos de texto (input, textarea y editores enriquecidos) en cualquier sitio web que visite el usuario.
