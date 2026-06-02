@@ -26,15 +26,16 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px;
   line-height: 1.4;
+  color: #ffffff;
 
-  background: rgba(250, 246, 240, 0.95); /* Beige cálido translúcido */
+  background: rgba(131, 73, 37, 0.98); /* Café / Marrón Oficial Canva sólido */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(139, 115, 85, 0.25); /* Borde de tono tierra */
-  border-radius: 14px;
+  border: 3px solid #ff751f; /* Borde naranja claro */
+  border-radius: 24px;
   box-shadow:
-    0 24px 64px rgba(62, 42, 31, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 24px 64px rgba(62, 42, 31, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   overflow: hidden;
   opacity: 0;
@@ -59,8 +60,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px 11px;
-  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
-  background: rgba(62, 42, 31, 0.05); /* Tinte tierra cálido */
+  border-bottom: 2px solid #ff751f; /* Naranja Claro Salmón */
+  background: #ec422b; /* Rojo Oficial Canva */
 }
 
 .rg-logo {
@@ -77,20 +78,20 @@
 .rg-title {
   font-size: 12px;
   font-weight: 800;
-  color: #3e2a1f; /* Marrón oscuro */
+  color: #ffffff; /* Blanco */
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
 .rg-close {
-  background: rgba(62, 42, 31, 0.06);
-  border: 1px solid rgba(62, 42, 31, 0.15);
-  color: #8b7355;
+  background: #834925;
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
   cursor: pointer;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.15s ease;
   line-height: 1;
   font-family: inherit;
@@ -98,9 +99,9 @@
 }
 
 .rg-close:hover {
-  color: #ff3131; /* Rojo vibrante */
-  background: rgba(229, 36, 59, 0.08);
-  border-color: rgba(229, 36, 59, 0.25);
+  color: #fde4d4; /* Melocotón Claro */
+  background: #ff751f; /* Naranja Claro */
+  border-color: #fde4d4;
 }
 
 /* ---- Typing indicator ---- */
@@ -112,9 +113,9 @@
 }
 
 .rg-typing-label {
-  color: #8b7355;
+  color: #fde4d4; /* Melocotón Claro */
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .rg-typing-dots {
@@ -146,9 +147,9 @@
   align-items: center;
   gap: 10px;
   padding: 15px 16px;
-  color: #8b7355;
+  color: #fde4d4; /* Melocotón Claro */
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .rg-spinner {
@@ -180,14 +181,14 @@
 
 .rg-risk-label {
   font-size: 12px;
-  font-weight: 700;
-  color: #3e2a1f;
+  font-weight: 800;
+  color: #ffffff;
 }
 
 .rg-risk-score {
   font-size: 11px;
-  font-weight: 700;
-  color: #8b7355;
+  font-weight: 800;
+  color: #fde4d4;
 }
 
 .rg-risk-bar-wrap {
@@ -235,12 +236,12 @@
 .rg-badge {
   display: inline-block;
   padding: 2px 9px;
-  background: #e6dfd5;
-  border: 1px solid #d2b48c;
-  color: #6e5544;
+  background: #ff751f; /* Naranja Claro */
+  border: 1px solid #ec422b; /* Rojo */
+  color: #ffffff;
   border-radius: 99px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -248,7 +249,7 @@
 /* ---- Sections ---- */
 .rg-section {
   padding: 10px 14px;
-  border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+  border-bottom: 1px solid rgba(255, 117, 31, 0.3);
 }
 
 .rg-section:last-child {
@@ -257,17 +258,18 @@
 
 .rg-section-title {
   font-size: 10px;
-  font-weight: 700;
-  color: #8b7355;
+  font-weight: 800;
+  color: #fde4d4; /* Melocotón Claro */
   text-transform: uppercase;
   letter-spacing: 0.7px;
   margin-bottom: 6px;
 }
 
 .rg-explicacion {
-  color: #6e5544;
+  color: #ffffff;
   font-size: 12px;
   line-height: 1.55;
+  font-weight: 600;
 }
 
 /* ---- Fragments ---- */
@@ -279,45 +281,47 @@
 
 .rg-fragment {
   padding: 4px 8px;
-  background: #f5efe6;
-  border-left: 2.5px solid #ef7d00; /* Naranja campaña contra violencia */
-  color: #6e5544;
+  background: #ff751f; /* Naranja Claro */
+  border-left: 3px solid #ec422b; /* Rojo */
+  color: #ffffff;
   border-radius: 0 5px 5px 0;
   font-size: 11px;
   font-style: italic;
+  font-weight: 600;
 }
 
 /* ---- Reformulado ---- */
 .rg-section-reformular {
-  background: rgba(250, 246, 240, 0.8);
+  background: rgba(131, 73, 37, 0.4);
 }
 
 .rg-reformulado {
-  color: #3e2a1f;
+  color: #ffffff;
   font-size: 12px;
   line-height: 1.55;
   padding: 9px 11px;
-  background: #ffffff;
-  border: 1px solid #d2b48c;
+  background: #ff751f; /* Naranja Claro */
+  border: 2px solid #ec422b; /* Rojo */
   border-radius: 8px;
   margin-bottom: 9px;
   font-style: italic;
+  font-weight: 600;
 }
 
 .rg-btn-apply {
   width: 100%;
   padding: 9px 14px;
-  background: #e5243b; /* Rojo ODS 5 */
+  background: #ec422b; /* Rojo Oficial Canva */
   color: #ffffff;
-  border: 1px solid #e5243b;
+  border: 2px solid #ffffff; /* Blanco */
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.18s;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(229, 36, 59, 0.15);
+  box-shadow: 0 2px 4px rgba(229, 36, 59, 0.25);
 }
 
 .rg-btn-apply:hover {
@@ -333,11 +337,12 @@
 /* ---- Consejo ---- */
 .rg-consejo {
   padding: 10px 14px;
-  color: #8b7355;
+  color: #fde4d4; /* Melocotón Claro */
   font-size: 11px;
   line-height: 1.45;
-  border-top: 1px solid rgba(139, 115, 85, 0.1);
+  border-top: 1px solid rgba(255, 117, 31, 0.3);
   font-style: italic;
+  font-weight: 600;
 }
 
 /* ---- Error ---- */

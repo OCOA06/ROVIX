@@ -56,12 +56,12 @@ function updateStatus(enabled) {
 
   if (!enabled) {
     dot.classList.add("inactive");
-    text.textContent = "Extensión desactivada";
+    text.textContent = "Inactivo - Protección pausada";
     return;
   }
 
   dot.classList.add("active");
-  text.textContent = "Activo — protegiendo en tiempo real";
+  text.textContent = "Activo - Protegiendo en tiempo real";
 }
 
 // ============================================================================
