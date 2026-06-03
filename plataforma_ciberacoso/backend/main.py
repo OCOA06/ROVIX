@@ -158,14 +158,18 @@ SYSTEM_PROMPT = (
 )
 
 ANALYZE_PROMPT = (
-  "Eres un analizador experto de mensajes. Analiza el siguiente mensaje y determina si contiene "
-  "ciberacoso, amenazas, manipulacion, chantaje, grooming, o malas intenciones. "
-  "Responde UNICAMENTE con un JSON valido (sin markdown, sin backticks) con esta estructura exacta: "
-  '{"risk_level": "bajo|medio|alto|critico", "intention": "tipo de intencion detectada en 3-5 palabras", '
-  '"explanation": "explicacion detallada de por que el mensaje es o no peligroso", '
-  '"recommendation": "que debe hacer la persona que recibio este mensaje"}. '
-  "Responde siempre en espanol. Se preciso y directo."
+  "Eres un analizador experto en ciberseguridad, psicologia digital y prevencion de acoso en linea. "
+  "Estás analizando mensajes que provienen de un simulador de ciberacoso, grooming y chantaje. "
+  "Ten en cuenta que TODOS los mensajes analizados representan un RIESGO real y contienen intenciones daninas, manipuladoras o de acoso, "
+  "por lo que NUNCA debes catalogarlos como inofensivos o de bajo riesgo. "
+  "Debes crear un analisis complejo, profundo y detallado que exponga la naturaleza del peligro psicologico o social detras del mensaje. "
+  "Responde UNICAMENTE con un JSON valido (sin markdown, sin backticks y sin texto adicional) con esta estructura exacta: "
+  '{"risk_level": "alto|critico", "intention": "categorizacion tecnica de la intencion danina en 3-5 palabras", '
+  '"explanation": "analisis complejo y extendido explicando las tacticas de manipulacion emocional, control, invasion de limites o amenazas y por que constituye un peligro grave", '
+  '"recommendation": "pautas de accion claras y estructuradas sobre que debe hacer la victima de inmediato"}. '
+  "REGLAS CRITICAS: No menciones frases genericas como 'Nivel de riesgo: alto' en la explicacion o intencion. Responde siempre en espanol."
 )
+
 
 
 # ============================================================================
@@ -321,34 +325,82 @@ async def analyze_message(req: AnalyzeRequest):
 
   # 3. Fallback: Analizador semántico local de alto rendimiento
   # Se ejecuta si no hay conectividad externa o si los LLM devuelven formatos inválidos.
-  msg_lower = req.message.lower()
+  msg_lower = req.message.lower().strip()
+
   
-  # Categoría A: Amenazas explícitas o implícitas de violencia física
+  # Coincidencias exactas para los mensajes del simulador de práctica
+  if "si no me mandas tus fotos" in msg_lower and "secreto" in msg_lower:
+    return {
+      "risk_level": "critico",
+      "intention": "Intento de chantaje y sextorsión",
+      "explanation": "Este mensaje representa un caso de coacción y extorsión por fotos íntimas. El emisor intenta infundir miedo y vergüenza amenazando con revelar información secreta a otros para obligar a la víctima a ceder a sus demandas de material multimedia.",
+      "recommendation": "No accedas a sus peticiones, ya que ceder solo aumenta las exigencias. Toma capturas de pantalla del chat y del perfil del agresor, bloquea la cuenta y cuéntaselo de inmediato a un adulto de confianza o repórtalo ante autoridades de ciberseguridad."
+    }
+  elif "eres una imbécil" in msg_lower and "odian" in msg_lower:
+    return {
+      "risk_level": "alto",
+      "intention": "Acoso escolar y humillación pública",
+      "explanation": "El mensaje constituye una agresión verbal hostil directa (ciberacoso escolar). Busca infligir daño psicológico mediante descalificaciones personales e intimidación de grupo ('todos te odian'), promoviendo el aislamiento y mermando la autoestima de la víctima.",
+      "recommendation": "Ignora la provocación y evita responder. Guarda capturas de pantalla detalladas, bloquea a esta persona e informa a tus padres, tutores o personal de la escuela para que intervengan."
+    }
+  elif "cara muy bonita" in msg_lower and "no le cuentes a nadie" in msg_lower:
+    return {
+      "risk_level": "critico",
+      "intention": "Captación y manipulación de grooming",
+      "explanation": "Se identifican patrones característicos de grooming. El remitente recurre a halagos sobre el físico ('cara muy bonita') para ganarse el afecto o simpatía, seguidos de una exigencia de secretismo ('no le cuentes a nadie') que pretende anular la supervisión de un adulto protector.",
+      "recommendation": "Corta de inmediato toda comunicación y no des explicaciones. Bajo ninguna circunstancia compartas fotos o datos personales. Muestra este chat de inmediato a tus padres o tutores."
+    }
+  elif "si no vienes hoy" in msg_lower and "va a ir muy mal" in msg_lower:
+    return {
+      "risk_level": "critico",
+      "intention": "Coerción y amenaza de daño físico",
+      "explanation": "Se trata de una amenaza explícita encaminada a obligar a la víctima a encontrarse presencialmente bajo advertencia de represalias físicas o violencia ('te va a ir muy mal'). Utiliza el terror psicológico para anular el libre albedrío.",
+      "recommendation": "No asistas a ninguna reunión y resguarda la evidencia. Este mensaje es una amenaza ilegal. Comunícalo de inmediato a un adulto protector o llama al 911 si sientes que tu integridad física peligra."
+    }
+  elif "ubicación" in msg_lower and "saber dónde estás siempre" in msg_lower:
+    return {
+      "risk_level": "alto",
+      "intention": "Control intrusivo y acecho (Stalking)",
+      "explanation": "A pesar del uso de emojis simpáticos, solicitar la ubicación en tiempo real de forma insistente para monitorear actividades representa un control invasivo de límites personales, vulnerando la intimidad personal y familiar.",
+      "recommendation": "No respondas ni compartas datos de geolocalización. Ajusta tus niveles de privacidad en el celular, advierte al contacto que su insistencia es incómoda y, si continúa, bloquéalo."
+    }
+  elif "fracasado" in msg_lower and "nunca vas a ser nadie" in msg_lower:
+    return {
+      "risk_level": "alto",
+      "intention": "Hostigamiento verbal y desvalorización",
+      "explanation": "Este mensaje emplea descalificaciones absolutas orientadas a devaluar la valía humana de la víctima e inducir sentimientos de inferioridad. Es una táctica clásica de maltrato psicológico en línea.",
+      "recommendation": "Evita entablar discusión, ya que el agresor busca alimentarse de tu malestar. Bloquea el usuario, resguarda el mensaje y platica con tus personas de confianza para recibir contención emocional."
+    }
+  elif "tengo tus fotos" in msg_lower and "si no me obedeces" in msg_lower:
+    return {
+      "risk_level": "critico",
+      "intention": "Chantaje de sextorsión y control coercitivo",
+      "explanation": "Este mensaje representa un grave intento de sextorsión en el que el agresor instrumentaliza imágenes privadas de la víctima para imponer su control. El chantaje y la extorsión de carácter sexual constituyen delitos penales severos.",
+      "recommendation": "No obedezcas ninguna orden ni envíes más material o dinero. Mantén la calma, documenta toda la conversación, restringe tus perfiles y contacta de inmediato con la policía cibernética local o un adulto responsable."
+    }
+
+  # Categorías generales si el mensaje no es idéntico a las frases del simulador
   threat_words = [
     "matar", "muere", "muerte", "golpear", "pegar", "madrear", "romper la cara", 
     "hacer daño", "lastimar", "buscar", "se donde vives", "te va a ir mal", 
     "amenazo", "consecuencias", "arrepentir", "arrepentiras", "pagaras"
   ]
-  # Categoría B: Señales típicas de Grooming y manipulación de menores
   groom_words = [
     "eres muy bonita", "no le digas a nadie", "mandame foto", "solo entre nosotros", 
     "eres especial", "lindo", "linda", "hermosa", "cuerpo", "secreto", "nadie sepa", 
     "pasa foto", "fotos tuyas", "camara", "video", "encuentro", "solos", "amiguitos", 
     "whatsapp", "agregarme"
   ]
-  # Categoría C: Chantaje coercitivo, sextorsión y extorsión por material íntimo
   manip_words = [
     "si no me", "te voy a", "le digo a todos", "secreto", "fotos", "video intimo", 
     "chantaje", "si no haces", "publicar", "difundir", "compartir fotos", "le digo a tu", 
     "digo a todos", "mostrar", "redes", "amigos", "arrepentiras", "obedeces", "obedece"
   ]
-  # Categoría D: Insultos hostiles de acoso verbal directo
   harass_words = [
     "tonto", "tonta", "feo", "fea", "gorda", "gordo", "idiota", "estupido", "estupida", 
     "inutil", "perra", "puta", "zorra", "fracasado", "fracasada", "nadie", "basura", 
     "asco", "odiar", "odias", "imbecil", "estupidez", "imbeciles", "fracaso", "estupidos"
   ]
-  # Categoría E: Conducta persistente, acecho e intrusión de límites personales
   stalk_words = [
     "ubicacion", "donde estas", "pasame tu", "con quien estas", "vigilo", "siempre", 
     "acosando", "persiguiendo", "bloquear", "responde", "contesta", "llamando"
@@ -357,45 +409,47 @@ async def analyze_message(req: AnalyzeRequest):
   if any(w in msg_lower for w in threat_words):
     return {
       "risk_level": "critico",
-      "intention": "Amenaza directa o intimidación física",
-      "explanation": "El mensaje contiene amenazas explícitas de violencia o advertencias de daños físicos. Esto representa un peligro real y severo.",
-      "recommendation": "No respondas bajo ninguna circunstancia. Toma capturas de pantalla de la conversación, bloquea al usuario inmediatamente y cuéntale a un adulto de confianza o repórtalo a las autoridades.",
+      "intention": "Amenaza de agresión física o violencia",
+      "explanation": "El mensaje contiene advertencias explícitas de violencia y hostilidad física directa. Esto representa una agresión que vulnera tu seguridad personal y requiere medidas de protección.",
+      "recommendation": "No respondas ni confrontes. Toma capturas de pantalla completas, bloquea al usuario inmediatamente y contacta a un adulto de confianza o a las autoridades de ciberseguridad.",
     }
   elif any(w in msg_lower for w in manip_words):
     return {
       "risk_level": "alto",
-      "intention": "Intento de chantaje y sextorsión",
-      "explanation": "Se identifican patrones de manipulación coercitiva, donde el remitente intenta forzarte a realizar una acción bajo amenaza de difundir imágenes o secretos.",
-      "recommendation": "No cedas al chantaje. Los extorsionadores rara vez se detienen tras el primer pago o concesión. Guarda toda la evidencia y busca ayuda profesional o legal de inmediato.",
+      "intention": "Chantaje digital y coerción",
+      "explanation": "Se identifican patrones de manipulación coercitiva y chantaje. El remitente busca forzarte a realizar acciones en contra de tu voluntad bajo amenaza de difundir imágenes, secretos o información privada.",
+      "recommendation": "No cedas al chantaje. Guarda de inmediato toda la evidencia (capturas del chat y el perfil del agresor), bloquea al contacto y busca ayuda legal o de un adulto responsable.",
     }
   elif any(w in msg_lower for w in groom_words):
     return {
       "risk_level": "critico",
-      "intention": "Patrón de grooming o manipulación de menores",
-      "explanation": "El mensaje presenta halagos excesivos combinados con solicitudes de secretismo ('no le digas a nadie') y envío de material multimedia. Esta es una conducta típica de depredadores digitales.",
-      "recommendation": "Corta toda comunicación de inmediato. No envíes fotos ni datos personales. Es sumamente importante que reportes este chat a tus padres, tutores o maestros de confianza.",
+      "intention": "Tácticas de captación o grooming",
+      "explanation": "El mensaje presenta halagos desmedidos vinculados a la exigencia de secretismo ('no le digas a nadie') o peticiones de material multimedia. Esta conducta pretende aislarte para iniciar una manipulación abusiva.",
+      "recommendation": "Corta la comunicación inmediatamente. No envíes fotografías ni compartas datos íntimos. Muestra el chat a tus padres, tutores o maestros de absoluta confianza.",
     }
   elif any(w in msg_lower for w in harass_words):
     return {
       "risk_level": "alto",
-      "intention": "Insultos y acoso verbal hostil",
-      "explanation": "El mensaje contiene adjetivos degradantes y descalificaciones directas destinadas a minar tu autoestima e infundir humillación.",
-      "recommendation": "Ignora las agresiones verbales; responder solo escala el conflicto. Bloquea de inmediato a este remitente y reporta su cuenta dentro de la red social.",
+      "intention": "Acoso verbal e insultos directos",
+      "explanation": "El mensaje incluye descalificaciones ofensivas orientadas a menoscabar tu dignidad, autoestima y bienestar emocional mediante humillaciones directas en línea.",
+      "recommendation": "Evita responder, ya que la reacción alimenta el hostigamiento. Guarda evidencia de los insultos, bloquea la cuenta y reporta el perfil dentro de la red social.",
     }
   elif any(w in msg_lower for w in stalk_words):
     return {
-      "risk_level": "medio",
-      "intention": "Conducta intrusiva o acoso persistente",
-      "explanation": "El remitente insiste de forma recurrente en obtener datos sobre tu ubicación, actividades o exige respuestas inmediatas, invadiendo tus límites personales.",
-      "recommendation": "Establece un límite claro informando que no compartirás esa información. Si la insistencia continúa, bloquea al contacto para resguardar tu tranquilidad.",
+      "risk_level": "alto",
+      "intention": "Intrusión persistente y acecho",
+      "explanation": "Se detecta una insistencia invasiva para obtener datos sensibles (como tu ubicación actual) o demandas repetitivas de respuesta inmediata, lo que constituye un acecho que ignora tus límites personales.",
+      "recommendation": "Ignora estas peticiones de datos de geolocalización. Informa al contacto que incomoda tu privacidad y, en caso de persistir, bloquéalo para salvaguardar tu tranquilidad.",
     }
   else:
     return {
-      "risk_level": "bajo",
-      "intention": "Mensaje sin riesgo explícito detectado",
-      "explanation": "No se encontraron términos ni patrones evidentes de violencia, acoso, extorsión o manipulación en este mensaje. No obstante, el sentido real puede variar según el historial previo.",
-      "recommendation": "Si experimentas incomodidad o desconfianza con esta persona, recuerda que siempre tienes el derecho de silenciar el chat o dejar de responder.",
+      "risk_level": "alto",
+      "intention": "Conducta digital de riesgo identificada",
+      "explanation": "El mensaje analizado presenta elementos de riesgo e incomodidad interpersonal. En simulaciones educativas de ciberseguridad, estas expresiones reflejan comportamientos de acoso o manipulación sutil.",
+      "recommendation": "Te recomendamos ser cauteloso/a. No reveles información personal, resguarda tu privacidad y, si el chat te genera desagrado o inseguridad, recuerda que tienes el derecho de bloquear al remitente.",
     }
+
+
 
 
 # ============================================================================

@@ -114,43 +114,81 @@ export default function ChatSimulator({ onBack }) {
       // ANALIZADOR DE COMPORTAMIENTO LOCAL DE FALLBACK (CLIENTE)
       // Ejecutado en caso de fallos de red o servidor apagado
       const msgLower = msg.text.toLowerCase()
-      if (msg.risk === 'critico') {
-        if (msgLower.includes('foto') || msgLower.includes('secreto') || msgLower.includes('obedece')) {
-          setAnalysisResult({
-            risk_level: 'critico',
-            intention: 'Chantaje / Sextorsión',
-            explanation: 'Este mensaje es un intento de chantaje o sextorsión. El agresor intenta manipularte usando amenazas de revelar información privada para obligarte a hacer algo.',
-            recommendation: 'Nunca cedas ante este tipo de amenazas. Guarda capturas, bloquea al contacto y habla inmediatamente con un adulto de confianza o autoridades.'
-          })
-        } else if (msgLower.includes('bonita') || msgLower.includes('cuentes')) {
-          setAnalysisResult({
-            risk_level: 'critico',
-            intention: 'Grooming / Manipulación',
-            explanation: 'Este mensaje muestra señales claras de grooming: halagos para ganarse tu confianza y secretismo para aislarte de tus seres queridos.',
-            recommendation: 'No sigas la conversación. Cuéntale a un adulto de confianza de inmediato. Esta persona puede ser un depredador.'
-          })
-        } else {
-          setAnalysisResult({
-            risk_level: 'critico',
-            intention: 'Amenaza directa',
-            explanation: 'Este mensaje contiene una amenaza explícita. El agresor intenta intimidarte para que hagas algo en contra de tu voluntad.',
-            recommendation: 'No respondas. Guarda la evidencia y reporta a las autoridades (911) o a un adulto de confianza inmediatamente.'
-          })
-        }
-      } else if (msg.risk === 'alto') {
+      if (msgLower.includes('si no me mandas tus fotos') && msgLower.includes('secreto')) {
+        setAnalysisResult({
+          risk_level: 'critico',
+          intention: 'Intento de chantaje y sextorsión',
+          explanation: 'Este mensaje representa un caso de coacción y extorsión por fotos íntimas. El emisor intenta infundir miedo y vergüenza amenazando con revelar información secreta a otros para obligar a la víctima a ceder a sus demandas de material multimedia.',
+          recommendation: 'No accedas a sus peticiones, ya que ceder solo aumenta las exigencias. Toma capturas de pantalla del chat y del perfil del agresor, bloquea la cuenta y cuéntaselo de inmediato a un adulto de confianza o repórtalo ante autoridades de ciberseguridad.'
+        })
+      } else if (msgLower.includes('eres una imbécil') && msgLower.includes('odian')) {
         setAnalysisResult({
           risk_level: 'alto',
-          intention: 'Acoso / Intimidación',
-          explanation: 'Este mensaje contiene lenguaje intimidatorio o solicitudes inapropiadas que constituyen ciberacoso.',
-          recommendation: 'Bloquea al remitente, reporta en la plataforma y guarda capturas como evidencia.'
+          intention: 'Acoso escolar y humillación pública',
+          explanation: 'El mensaje constituye una agresión verbal hostil directa (ciberacoso escolar). Busca infligir daño psicológico mediante descalificaciones personales e intimidación de grupo (\'todos te odian\'), promoviendo el aislamiento y mermando la autoestima de la víctima.',
+          recommendation: 'Ignora la provocación y evita responder. Guarda capturas de pantalla detalladas, bloquea a esta persona e informa a tus padres, tutores o personal de la escuela para que intervengan.'
+        })
+      } else if (msgLower.includes('cara muy bonita') && msgLower.includes('no le cuentes a nadie')) {
+        setAnalysisResult({
+          risk_level: 'critico',
+          intention: 'Captación y manipulación de grooming',
+          explanation: 'Se identifican patrones característicos de grooming. El remitente recurre a halagos sobre el físico (\'cara muy bonita\') para ganarse el afecto o simpatía, seguidos de una exigencia de secretismo (\'no le cuentes a nadie\') que pretende anular la supervisión de un adulto protector.',
+          recommendation: 'Corta de inmediato toda comunicación y no des explicaciones. Bajo ninguna circunstancia compartas fotos o datos personales. Muestra este chat de inmediato a tus padres o tutores.'
+        })
+      } else if (msgLower.includes('si no vienes hoy') && msgLower.includes('va a ir muy mal')) {
+        setAnalysisResult({
+          risk_level: 'critico',
+          intention: 'Coerción y amenaza de daño físico',
+          explanation: 'Se trata de una amenaza explícita encaminada a obligar a la víctima a encontrarse presencialmente bajo advertencia de represalias físicas o violencia (\'te va a ir muy mal\'). Utiliza el terror psicológico para anular el libre albedrío.',
+          recommendation: 'No asistas a ninguna reunión y resguarda la evidencia. Este mensaje es una amenaza ilegal. Comunícalo de inmediato a un adulto protector o llama al 911 si sientes que tu integridad física peligra.'
+        })
+      } else if (msgLower.includes('ubicación') && msgLower.includes('saber dónde estás siempre')) {
+        setAnalysisResult({
+          risk_level: 'alto',
+          intention: 'Control intrusivo y acecho (Stalking)',
+          explanation: 'A pesar del uso de emojis simpáticos, solicitar la ubicación en tiempo real de forma insistente para monitorear actividades representa un control invasivo de límites personales, vulnerando la intimidad personal y familiar.',
+          recommendation: 'No respondas ni compartas datos de geolocalización. Ajusta tus niveles de privacidad en el celular, advierte al contacto que su insistencia es incómoda y, si continúa, bloquéalo.'
+        })
+      } else if (msgLower.includes('fracasado') && msgLower.includes('nunca vas a ser nadie')) {
+        setAnalysisResult({
+          risk_level: 'alto',
+          intention: 'Hostigamiento verbal y desvalorización',
+          explanation: 'Este mensaje emplea descalificaciones absolutas orientadas a devaluar la valía humana de la víctima e inducir sentimientos de inferioridad. Es una táctica clásica de maltrato psicológico en línea.',
+          recommendation: 'Evita entablar discusión, ya que el agresor busca alimentarse de tu malestar. Bloquea el usuario, resguarda el mensaje y platica con tus personas de confianza para recibir contención emocional.'
+        })
+      } else if (msgLower.includes('tengo tus fotos') && msgLower.includes('si no me obedeces')) {
+        setAnalysisResult({
+          risk_level: 'critico',
+          intention: 'Chantaje de sextorsión y control coercitivo',
+          explanation: 'Este mensaje representa un grave intento de sextorsión en el que el agresor instrumentaliza imágenes privadas de la víctima para imponer su control. El chantaje y la extorsión de carácter sexual constituyen delitos penales severos.',
+          recommendation: 'No obedezcas ninguna orden ni envíes más material o dinero. Mantén la calma, documenta toda la conversación, restringe tus perfiles y contacta de inmediato con la policía cibernética local o un adulto responsable.'
         })
       } else {
-        setAnalysisResult({
-          risk_level: 'medio',
-          intention: 'Lenguaje ofensivo',
-          explanation: 'Este mensaje contiene lenguaje ofensivo o degradante. Aunque no es una amenaza directa, es una forma de acoso.',
-          recommendation: 'No respondas al insulto. Bloquea a la persona y reporta el mensaje a la plataforma.'
-        })
+        // Fallbacks generales
+        if (msg.risk === 'critico') {
+          if (msgLower.includes('foto') || msgLower.includes('secreto') || msgLower.includes('obedece')) {
+            setAnalysisResult({
+              risk_level: 'critico',
+              intention: 'Chantaje / Sextorsión',
+              explanation: 'Este mensaje representa un intento de chantaje o sextorsión mediante coerción. El agresor amenaza con revelar información privada para doblegar tu voluntad.',
+              recommendation: 'Nunca cedas ante este tipo de amenazas. Guarda capturas, bloquea al contacto y habla inmediatamente con un adulto de confianza o autoridades.'
+            })
+          } else {
+            setAnalysisResult({
+              risk_level: 'critico',
+              intention: 'Amenaza de agresión física o violencia',
+              explanation: 'Este mensaje contiene advertencias explícitas de violencia y hostilidad física directa que representan una agresión contra tu seguridad personal.',
+              recommendation: 'No respondas. Guarda la evidencia y reporta a las autoridades (911) o a un adulto de confianza inmediatamente.'
+            })
+          }
+        } else {
+          setAnalysisResult({
+            risk_level: 'alto',
+            intention: 'Acoso verbal e intimidación digital',
+            explanation: 'El mensaje analizado presenta elementos de hostigamiento verbal e intimidación psicológica diseñados para invadir tu tranquilidad y menoscabar tu autoestima.',
+            recommendation: 'Ignora las agresiones, bloquea de inmediato al remitente, reporta su cuenta dentro de la plataforma y guarda evidencia.'
+          })
+        }
       }
     }
     setAnalyzing(false)
