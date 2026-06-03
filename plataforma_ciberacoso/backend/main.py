@@ -20,6 +20,7 @@ import g4f
 from g4f.client import Client
 import json
 import urllib.request
+from starlette.concurrency import run_in_threadpool
 
 # ============================================================================
 # FUNCIONES AUXILIARES: LLAMADAS A MODELOS DE LENGUAJE (LLM)
@@ -192,13 +193,13 @@ async def chat_api(req: ChatRequest):
 
   messages_list.append({"role": "user", "content": req.message})
 
-  # 1. Intento primario: Conexión Pollinations AI directo
-  response_text = query_llm(messages_list)
+  # 1. Intento primario: Conexión Pollinations AI directo (ejecutado en thread pool para no bloquear el event loop)
+  response_text = await run_in_threadpool(query_llm, messages_list)
   if response_text:
     return {"response": response_text.replace("*", "")}
 
-  # 2. Intento secundario: g4f (GPT4Free)
-  response_text = query_llm_g4f(messages_list)
+  # 2. Intento secundario: g4f (GPT4Free) (ejecutado en thread pool para no bloquear el event loop)
+  response_text = await run_in_threadpool(query_llm_g4f, messages_list)
   if response_text:
     return {"response": response_text.replace("*", "")}
 
@@ -296,8 +297,8 @@ async def analyze_message(req: AnalyzeRequest):
     {"role": "user", "content": f'Analiza este mensaje: "{req.message}"'},
   ]
 
-  # 1. Intento primario: Pollinations AI directo (con modo JSON estructurado)
-  response_text = query_llm(analyze_messages, json_mode=True)
+  # 1. Intento primario: Pollinations AI directo (con modo JSON estructurado) (ejecutado en thread pool)
+  response_text = await run_in_threadpool(query_llm, analyze_messages, json_mode=True)
   if response_text:
     try:
       cleaned = response_text
@@ -310,8 +311,8 @@ async def analyze_message(req: AnalyzeRequest):
     except Exception:
       pass
 
-  # 2. Intento secundario: g4f (GPT4Free)
-  response_text = query_llm_g4f(analyze_messages)
+  # 2. Intento secundario: g4f (GPT4Free) (ejecutado en thread pool)
+  response_text = await run_in_threadpool(query_llm_g4f, analyze_messages)
   if response_text:
     try:
       cleaned = response_text
@@ -472,41 +473,43 @@ def add_adversarial_perturbation(image: Image.Image, strength: float = 25.0) -> 
   :param strength: Amplitud o intensidad de las perturbaciones inyectadas.
   :return: Objeto imagen con perturbaciones aplicadas.
   """
-  # Convierte la imagen a un arreglo matricial NumPy de coma flotante para cálculos continuos
-  img_array = np.array(image, dtype=np.float64)
+  # Convierte la imagen a un arreglo matricial NumPy de coma flotante de precisión sencilla para optimizar memoria y CPU
+  img_array = np.array(image, dtype=np.float32)
   h, w, c = img_array.shape
 
   # Genera coordenadas espaciales matriciales
-  x = np.arange(w, dtype=np.float64)
-  y = np.arange(h, dtype=np.float64)
+  x = np.arange(w, dtype=np.float32)
+  y = np.arange(h, dtype=np.float32)
   xx, yy = np.meshgrid(x, y)
 
+  strength_f32 = np.float32(strength)
+
   # 1. Ondas de alta frecuencia en múltiples ángulos para perturbar texturas finas
-  high_freq_1 = np.sin(xx * 2.7 + yy * 3.1) * strength * 0.15
-  high_freq_2 = np.cos(xx * 4.3 - yy * 2.8) * strength * 0.12
-  high_freq_3 = np.sin((xx * 5.5 + yy * 4.2) * 0.7) * strength * 0.10
-  high_freq_4 = np.cos((xx - yy) * 3.9) * strength * 0.08
+  high_freq_1 = np.sin(xx * 2.7 + yy * 3.1) * strength_f32 * 0.15
+  high_freq_2 = np.cos(xx * 4.3 - yy * 2.8) * strength_f32 * 0.12
+  high_freq_3 = np.sin((xx * 5.5 + yy * 4.2) * 0.7) * strength_f32 * 0.10
+  high_freq_4 = np.cos((xx - yy) * 3.9) * strength_f32 * 0.08
 
   # 2. Rejillas de interferencia cruzadas (Cross-hatching) para quebrar la coherencia estructural de la IA
   cross_hatch = (
-    np.sin(xx * 6.0) * np.cos(yy * 6.0) * strength * 0.10
-    + np.sin((xx + yy) * 4.5) * np.cos((xx - yy) * 3.5) * strength * 0.08
+    np.sin(xx * 6.0) * np.cos(yy * 6.0) * strength_f32 * 0.10
+    + np.sin((xx + yy) * 4.5) * np.cos((xx - yy) * 3.5) * strength_f32 * 0.08
   )
 
   # 3. Patrón de tablero de ajedrez minúsculo de interferencia de fase
-  grid_x = (np.mod(xx, 8) < 4).astype(np.float64) * 2 - 1
-  grid_y = (np.mod(yy, 8) < 4).astype(np.float64) * 2 - 1
-  checker = grid_x * grid_y * strength * 0.06
+  grid_x = (np.mod(xx, 8) < 4).astype(np.float32) * 2.0 - 1.0
+  grid_y = (np.mod(yy, 8) < 4).astype(np.float32) * 2.0 - 1.0
+  checker = grid_x * grid_y * strength_f32 * 0.06
 
   # Genera una semilla basada en los píxeles superiores para inyectar ruido pseudoaleatorio consistente
   seed = int(np.sum(img_array[:8, :8, :].ravel()) * 7) % (2**31)
   rng = np.random.RandomState(seed)
-  random_noise = rng.uniform(-strength * 0.20, strength * 0.20, (h, w))
+  random_noise = rng.uniform(-strength_f32 * 0.20, strength_f32 * 0.20, (h, w)).astype(np.float32)
 
   # 4. Ruido por bloques de píxeles (bloques de 4x4)
   block_size = 4
-  block_noise = rng.uniform(-strength * 0.15, strength * 0.15,
-                            (h // block_size + 1, w // block_size + 1))
+  block_noise = rng.uniform(-strength_f32 * 0.15, strength_f32 * 0.15,
+                            (h // block_size + 1, w // block_size + 1)).astype(np.float32)
   block_expanded = np.repeat(np.repeat(block_noise, block_size, axis=0), block_size, axis=1)[:h, :w]
 
   # Combina todos los componentes de la perturbación base
@@ -530,8 +533,8 @@ def add_adversarial_perturbation(image: Image.Image, strength: float = 25.0) -> 
     # Amplifica sutilmente la perturbación en los bordes donde el ojo humano disfraza mejor el ruido
     ch_perturbation = base_perturbation * (1.0 + edge_mask * 0.5)
 
-    phase_shift = rng.uniform(0, 2 * np.pi)
-    ch_perturbation += np.sin(xx * 3.2 + phase_shift) * np.cos(yy * 2.8 + phase_shift) * strength * 0.05
+    phase_shift = np.float32(rng.uniform(0, 2 * np.pi))
+    ch_perturbation += np.sin(xx * 3.2 + phase_shift) * np.cos(yy * 2.8 + phase_shift) * strength_f32 * 0.05
 
     # Acota estrictamente la perturbación para que sea 100% invisible para el ojo humano (máximo +-2 en escala de 255)
     ch_perturbation = np.clip(ch_perturbation, -2.0, 2.0)
@@ -552,43 +555,35 @@ def embed_protection_lsb(image: Image.Image) -> Image.Image:
   :param image: Objeto imagen a marcar.
   :return: Objeto imagen con la firma digital embebida.
   """
-  pixels = image.load()
-  width, height = image.size
-  marker_bits = []
-  
   # Descompone cada byte de la marca binaria en bits individuales
+  marker_bits = []
   for byte in PROTECTION_MARKER:
     for i in range(7, -1, -1):
       marker_bits.append((byte >> i) & 1)
 
-  total_pixels = width * height
-  # Duplica la firma a lo largo de la imagen de forma redundante (hasta 50 veces) para tolerar leves recortes
-  repeat_count = min(total_pixels // (len(marker_bits) * 3), 50)
-  full_bits = marker_bits * max(repeat_count, 1)
+  # Convertimos la imagen a un array de NumPy para optimización vectorial
+  img_array = np.array(image, dtype=np.uint8)
+  h, w, c = img_array.shape
+  total_elements = h * w * c
 
-  bit_index = 0
-  for y_pos in range(height):
-    for x_pos in range(width):
-      if bit_index >= len(full_bits):
-        return image
-      r, g, b = pixels[x_pos, y_pos]
-      
-      # Inserta bits en el canal Rojo
-      r = (r & 0xFE) | full_bits[bit_index]
-      bit_index += 1
-      
-      # Inserta bits en el canal Verde
-      if bit_index < len(full_bits):
-        g = (g & 0xFE) | full_bits[bit_index]
-        bit_index += 1
-        
-      # Inserta bits en el canal Azul
-      if bit_index < len(full_bits):
-        b = (b & 0xFE) | full_bits[bit_index]
-        bit_index += 1
-        
-      pixels[x_pos, y_pos] = (r, g, b)
-  return image
+  # Duplica la firma a lo largo de la imagen de forma redundante (hasta 50 veces) para tolerar leves recortes
+  repeat_count = min(total_elements // (len(marker_bits) * 3), 50)
+  full_bits = np.array(marker_bits * max(repeat_count, 1), dtype=np.uint8)
+
+  n_bits = len(full_bits)
+  if n_bits > total_elements:
+    full_bits = full_bits[:total_elements]
+    n_bits = total_elements
+
+  if n_bits > 0:
+    # Aplanamos el array temporalmente mediante reshape para realizar la modificación vectorial rápida (evita bucles anidados en Python)
+    shape_orig = img_array.shape
+    img_array = img_array.reshape(-1)
+    # Limpiamos el LSB (& 0xFE) y sumamos el bit de firma (| full_bits)
+    img_array[:n_bits] = (img_array[:n_bits] & 0xFE) | full_bits
+    img_array = img_array.reshape(shape_orig)
+
+  return Image.fromarray(img_array)
 
 
 # La verificación esteganográfica LSB ha sido removida al simplificar la interfaz del Filtro Antirobo
@@ -610,10 +605,10 @@ async def apply_filter(file: UploadFile = File(...)):
     # Abre y decodifica la imagen usando Pillow convirtiéndola a espacio de color RGB
     image = Image.open(io.BytesIO(contents)).convert("RGB")
 
-    # 1. Inyecta perturbaciones adversarias matemáticas
-    image = add_adversarial_perturbation(image, strength=25.0)
-    # 2. Oculta la firma de seguridad digital LSB
-    image = embed_protection_lsb(image)
+    # 1. Inyecta perturbaciones adversarias matemáticas (ejecutado en thread pool)
+    image = await run_in_threadpool(add_adversarial_perturbation, image, strength=25.0)
+    # 2. Oculta la firma de seguridad digital LSB (ejecutado en thread pool)
+    image = await run_in_threadpool(embed_protection_lsb, image)
 
     # Vuelca la imagen resultante en memoria en formato de compresión sin pérdidas PNG
     output = io.BytesIO()

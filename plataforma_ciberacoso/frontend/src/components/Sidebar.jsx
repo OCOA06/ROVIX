@@ -9,7 +9,7 @@
  */
 
 import { useState } from 'react'
-import { AlertCircle, Home, X } from 'lucide-react'
+import { AlertCircle, X } from 'lucide-react'
 
 // ============================================================================
 // DICCIONARIO INFORMATIVO DE PORTALES Y NOTICIAS (INFO_DETAILS)
@@ -129,7 +129,7 @@ const INFO_DETAILS = {
 // ============================================================================
 // COMPONENTE EXPORTADO PRINCIPAL (SIDEBAR CON DISEÑO DE MOCKUP SÓLIDO)
 // ============================================================================
-export default function Sidebar({ activeView, setActiveView }) {
+export default function Sidebar({ setActiveView }) {
   // Estado local para almacenar qué modal informativo está activo en pantalla (null por defecto)
   const [activeModal, setActiveModal] = useState(null)
 

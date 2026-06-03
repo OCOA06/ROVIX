@@ -58,6 +58,24 @@ function getRiskStyle(level) {
   return RISK_COLORS[key] || RISK_COLORS.info
 }
 
+const INITIAL_CHAT_MESSAGES = [
+  {
+    id: 1,
+    text: "¡Hola! Soy ROVIX 🛡️\n\nToca cualquier globo de texto del teléfono para que lo analice, o pregúntame lo que quieras sobre ciberseguridad.",
+    sender: 'ai',
+    timestamp: new Date()
+  }
+];
+
+function createMessage(text, sender) {
+  return {
+    id: Date.now() + Math.random(),
+    text: text,
+    sender: sender,
+    timestamp: new Date()
+  };
+}
+
 // ============================================================================
 // COMPONENTE EXPORTADO PRINCIPAL
 // ============================================================================
@@ -68,14 +86,7 @@ export default function ChatSimulator({ onBack }) {
   const [analyzing, setAnalyzing] = useState(false)           // Indicador de carga (loader) para el análisis
 
   // Historial de mensajes en el chat de conversación con ROVIX
-  const [chatMessages, setChatMessages] = useState([
-    {
-      id: 1,
-      text: "¡Hola! Soy ROVIX 🛡️\n\nToca cualquier globo de texto del teléfono para que lo analice, o pregúntame lo que quieras sobre ciberseguridad.",
-      sender: 'ai',
-      timestamp: new Date()
-    }
-  ])
+  const [chatMessages, setChatMessages] = useState(INITIAL_CHAT_MESSAGES)
   const [inputText, setInputText] = useState('')              // Texto del input del chat
   const [chatLoading, setChatLoading] = useState(false)       // Loader para el chatbot
 
@@ -203,7 +214,7 @@ export default function ChatSimulator({ onBack }) {
    */
   const sendChat = async (text) => {
     if (!text.trim() || chatLoading) return
-    const userMsg = { id: Date.now(), text: text.trim(), sender: 'user', timestamp: new Date() }
+    const userMsg = createMessage(text.trim(), 'user')
     setChatMessages(prev => [...prev, userMsg])
     setInputText('')
     setChatLoading(true)
@@ -211,15 +222,15 @@ export default function ChatSimulator({ onBack }) {
       // 1. Envía el texto con el historial contextual reciente (últimas interacciones)
       const history = chatMessages.map(m => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text }))
       const res = await axios.post('http://localhost:8000/api/chat', { message: text.trim(), history }, { timeout: 35000 })
-      setChatMessages(prev => [...prev, { id: Date.now() + 1, text: res.data.response, sender: 'ai', timestamp: new Date() }])
+      setChatMessages(prev => [...prev, createMessage(res.data.response, 'ai')])
     } catch {
       try {
         // Fallback: Intenta una solicitud directa libre de historial
         const res = await axios.post('http://localhost:8000/api/chat', { message: text.trim(), history: [] }, { timeout: 35000 })
-        setChatMessages(prev => [...prev, { id: Date.now() + 1, text: res.data.response, sender: 'ai', timestamp: new Date() }])
+        setChatMessages(prev => [...prev, createMessage(res.data.response, 'ai')])
       } catch {
         // Fallback final: Alerta de falta de comunicación con el puerto local 8000
-        setChatMessages(prev => [...prev, { id: Date.now() + 1, text: "Error de conexión. Asegúrate de que el servidor esté corriendo en http://localhost:8000.", sender: 'ai', timestamp: new Date() }])
+        setChatMessages(prev => [...prev, createMessage("Error de conexión. Asegúrate de que el servidor esté corriendo en http://localhost:8000.", 'ai')])
       }
     }
     setChatLoading(false)
@@ -361,6 +372,7 @@ export default function ChatSimulator({ onBack }) {
               )}
 
               {!analyzing && selectedMsg && analysisResult && (() => {
+                const riskStyle = getRiskStyle(analysisResult.risk_level);
                 return (
                   <div className="animate-fadeIn">
                     {/* Caja de Análisis en Marrón Profundo */}
@@ -369,6 +381,9 @@ export default function ChatSimulator({ onBack }) {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-sm font-extrabold text-white">
                             Intención detectada: <span className="text-ods-orange font-extrabold uppercase tracking-wide">{analysisResult.intention}</span>
+                          </span>
+                          <span className={`text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-full text-white ${riskStyle.badge}`}>
+                            {riskStyle.icon} {analysisResult.risk_level}
                           </span>
                         </div>
                         <button 
